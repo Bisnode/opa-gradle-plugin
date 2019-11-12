@@ -6,9 +6,16 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.TaskAction;
 
 import javax.inject.Inject;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class StartOpaTask extends DefaultTask {
 
@@ -24,32 +31,43 @@ public abstract class StartOpaTask extends DefaultTask {
         String location = pluginExtension.getLocation();
         String srcDir = pluginExtension.getSrcDir();
 
-        if (getLogger().isTraceEnabled()) {
-            getLogger().trace("Starting OPA from {} with srcDir set to {}",
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("Starting OPA from {} with srcDir set to {}",
                     "opa".equals(location) ? "$PATH" : location, srcDir);
         }
 
         Project project = getProject();
-        Path locationPath = Paths.get(location);
+        Path srcPath = Paths.get(srcDir);
         String srcAbsolutePath;
-        srcAbsolutePath = locationPath.isAbsolute() ?
-                locationPath.toString() :
-                Paths.get(project.getRootDir().getPath(), location).toString();
+        srcAbsolutePath = srcPath.isAbsolute() ?
+                srcPath.toString() :
+                Paths.get(project.getRootDir().getPath(), srcDir).toString();
+        getLogger().debug("Absolute path of src directory determined to be {}", srcAbsolutePath);
 
-        getLogger().trace("Absolut path of src directory determined to be {}", srcAbsolutePath);
-
-        ProcessBuilder processBuilder = new ProcessBuilder();
+        List<String> command = Arrays.asList(location, "run", "-s", srcAbsolutePath);
+        getLogger().debug("Running command {}", String.join(" ", command));
         Process process;
         try {
-            process = processBuilder
+            process = new ProcessBuilder()
                     .directory(project.getRootDir())
-                    .command(location, "run", "-s", srcAbsolutePath)
+                    .command(command)
                     .start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        project.getExtensions().getExtraProperties().set("opaProcess", process);
-        getLogger().debug("Storing running opa process in ext.opaProcess");
+
+        if (process.isAlive()) {
+            getLogger().debug("Storing running opa process in ext.opaProcess");
+            project.getExtensions().getExtraProperties().set("opaProcess", process);
+        } else {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), UTF_8))) {
+                getLogger().error("{}", reader.lines().collect(Collectors.joining("\n")));
+            } catch (IOException e) {
+                getLogger().error("Failed to start OPA and failed to read error stream", e);
+                return;
+            }
+            throw new RuntimeException("Failed to start OPA");
+        }
     }
 
     @Override
