@@ -13,4 +13,9 @@ public class StopOpaTask extends DefaultTask {
         }
     }
 
+    @Override
+    public String getGroup() {
+        return "opa";
+    }
+
 }

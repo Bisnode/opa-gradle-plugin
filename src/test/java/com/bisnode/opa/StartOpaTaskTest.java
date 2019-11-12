@@ -35,6 +35,13 @@ public class StartOpaTaskTest {
     }
 
     @Test
+    public void taskIsInOpaGroup() {
+        project = ProjectBuilder.builder().build();
+        StartOpaTask task = (StartOpaTask) project.task("startOpa");
+        assertThat(task.getGroup(), is("opa"));
+    }
+
+    @Test
     public void opaPluginStartTaskSavesProcessInExtProperties() {
         StartOpaTask startOpaTask = (StartOpaTask) project.getTasks().getByName("startOpa");
         startOpaTask.startOpa();
