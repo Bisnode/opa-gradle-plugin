@@ -18,4 +18,9 @@ public class StopOpaTask extends DefaultTask {
         return "opa";
     }
 
+    @Override
+    public String getDescription() {
+        return "Stops the OPA server started by the startOpa task.";
+    }
+
 }

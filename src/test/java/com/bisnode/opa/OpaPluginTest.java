@@ -34,4 +34,9 @@ public class OpaPluginTest {
         assertThat(project.getTasks().getByName("stopOpa") instanceof StopOpaTask, is(true));
     }
 
+    @Test
+    public void opaPluginAddsTestRegoTaskToProject() {
+        assertThat(project.getTasks().getByName("testRego") instanceof TestRegoTask, is(true));
+    }
+
 }

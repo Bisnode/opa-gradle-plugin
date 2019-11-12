@@ -1,7 +1,6 @@
 package com.bisnode.opa;
 
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.After;
 import org.junit.Before;
@@ -28,16 +27,8 @@ public class StartOpaTaskTest {
     }
 
     @Test
-    public void canAddTaskToProject() {
-        project = ProjectBuilder.builder().build();
-        Task task = project.task("startOpa");
-        assertThat(task instanceof StartOpaTask, is(true));
-    }
-
-    @Test
     public void taskIsInOpaGroup() {
-        project = ProjectBuilder.builder().build();
-        StartOpaTask task = (StartOpaTask) project.task("startOpa");
+        StartOpaTask task = (StartOpaTask) project.getTasks().getByName("startOpa");
         assertThat(task.getGroup(), is("opa"));
     }
 

@@ -1,6 +1,7 @@
 package com.bisnode.opa;
 
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +9,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class StopOpaTaskTest {
+public class TestRegoTaskTest {
 
     private Project project;
 
@@ -19,8 +20,14 @@ public class StopOpaTaskTest {
     }
 
     @Test
+    public void canAddTaskToProject() {
+        Task task = project.getTasks().getByName("testRego");
+        assertThat(task instanceof TestRegoTask, is(true));
+    }
+
+    @Test
     public void taskIsInOpaGroup() {
-        StopOpaTask task = (StopOpaTask) project.getTasks().getByName("stopOpa");
+        TestRegoTask task = (TestRegoTask) project.getTasks().getByName("testRego");
         assertThat(task.getGroup(), is("opa"));
     }
 

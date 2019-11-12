@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public abstract class StartOpaTask extends DefaultTask {
+public class StartOpaTask extends DefaultTask {
 
     private final OpaPluginExtension pluginExtension;
 
@@ -73,5 +73,11 @@ public abstract class StartOpaTask extends DefaultTask {
     @Override
     public String getGroup() {
         return "opa";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Starts OPA in background to allow for subsequent tasks to query it (for integration tests or such). " +
+                "NOTE that you'll need to run the opaStop task to stop OPA after starting it with this task.";
     }
 }
