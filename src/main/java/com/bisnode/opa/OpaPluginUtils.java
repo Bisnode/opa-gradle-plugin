@@ -4,6 +4,8 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.ExtraPropertiesExtension.UnknownPropertyException;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 final class OpaPluginUtils {
 
@@ -21,6 +23,13 @@ final class OpaPluginUtils {
         } catch (UnknownPropertyException ignored) {
         }
         return false;
+    }
+
+    static String toAbsoluteProjectPath(Project project, String pathComponent) {
+        Path path = Paths.get(pathComponent);
+        return path.isAbsolute() ?
+                path.toString() :
+                Paths.get(project.getRootDir().getPath(), pathComponent).toString();
     }
 
 }
