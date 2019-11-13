@@ -1,14 +1,16 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
 group 'com.bisnode.opa'
-version '1.0-SNAPSHOT'
+version '0.1.0'
 
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -23,3 +25,18 @@ gradlePlugin {
         }
     }
 }
+
+pluginBundle {
+    website = 'https://www.bisnode.com'
+    vcsUrl = 'https://github.com/Bisnode/opa-gradle-plugin'
+    description = 'Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in Gradle builds.'
+    tags = ['opa', 'openpolicyagent', 'test', 'testing', 'policy', 'policies', 'authorization']
+
+    plugins {
+        opa {
+            displayName = 'Open Policy Agent plugin for Gradle'
+        }
+    }
+}
+
+
