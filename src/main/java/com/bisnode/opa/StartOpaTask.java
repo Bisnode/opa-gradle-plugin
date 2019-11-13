@@ -9,8 +9,6 @@ import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,11 +35,7 @@ public class StartOpaTask extends DefaultTask {
         }
 
         Project project = getProject();
-        Path srcPath = Paths.get(srcDir);
-        String srcAbsolutePath;
-        srcAbsolutePath = srcPath.isAbsolute() ?
-                srcPath.toString() :
-                Paths.get(project.getRootDir().getPath(), srcDir).toString();
+        String srcAbsolutePath = OpaPluginUtils.toAbsoluteProjectPath(project, srcDir);
         getLogger().debug("Absolute path of src directory determined to be {}", srcAbsolutePath);
 
         List<String> command = Arrays.asList(location, "run", "-s", srcAbsolutePath);
