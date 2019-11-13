@@ -1,12 +1,10 @@
 package com.bisnode.opa;
 
+import com.bisnode.opa.configuration.OpaPluginConvention;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -20,24 +18,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class TestRegoCoverageTask extends DefaultTask {
 
-    private final OpaPluginExtension pluginExtension;
-
     @Nullable
     private String srcDir;
     @Nullable
     private String testDir;
 
-    @Inject
-    public TestRegoCoverageTask(ObjectFactory objectFactory) {
-        pluginExtension = objectFactory.newInstance(OpaPluginExtension.class);
-    }
-
     @TaskAction
     public void testRegoCoverage() {
-        String location = pluginExtension.getLocation();
+        OpaPluginConvention convention = getProject().getConvention().getPlugin(OpaPluginConvention.class);
+        String location = convention.getLocation();
 
-        String src = Optional.ofNullable(srcDir).orElse(pluginExtension.getSrcDir());
-        String test = Optional.ofNullable(testDir).orElse(pluginExtension.getTestDir());
+        String src = Optional.ofNullable(srcDir).orElse(convention.getSrcDir());
+        String test = Optional.ofNullable(testDir).orElse(convention.getTestDir());
 
         List<String> command = Arrays.asList(location, "test", src, test, "--coverage");
 
@@ -59,13 +51,11 @@ public abstract class TestRegoCoverageTask extends DefaultTask {
         }
     }
 
-    @Input
     @Nullable
     public String getSrcDir() {
         return srcDir;
     }
 
-    @Input
     @Nullable
     public String getTestDir() {
         return testDir;

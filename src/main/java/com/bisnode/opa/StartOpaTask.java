@@ -1,11 +1,10 @@
 package com.bisnode.opa;
 
+import com.bisnode.opa.configuration.OpaPluginConvention;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.TaskAction;
 
-import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,17 +16,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class StartOpaTask extends DefaultTask {
 
-    private final OpaPluginExtension pluginExtension;
-
-    @Inject
-    public StartOpaTask(ObjectFactory objectFactory) {
-        pluginExtension = objectFactory.newInstance(OpaPluginExtension.class);
-    }
-
     @TaskAction
     public void startOpa() {
-        String location = pluginExtension.getLocation();
-        String srcDir = pluginExtension.getSrcDir();
+        OpaPluginConvention convention = getProject().getConvention().getPlugin(OpaPluginConvention.class);
+
+        String location = convention.getLocation();
+        String srcDir = convention.getSrcDir();
 
         if (getLogger().isDebugEnabled()) {
             getLogger().debug("Starting OPA from {} with srcDir set to {}",

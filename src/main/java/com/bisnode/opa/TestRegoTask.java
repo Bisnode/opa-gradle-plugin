@@ -1,27 +1,20 @@
 package com.bisnode.opa;
 
+import com.bisnode.opa.configuration.OpaPluginConvention;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.TaskAction;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
 
 public class TestRegoTask extends DefaultTask {
 
-    private final OpaPluginExtension pluginExtension;
-
-    @Inject
-    public TestRegoTask(ObjectFactory objectFactory) {
-        pluginExtension = objectFactory.newInstance(OpaPluginExtension.class);
-    }
-
     @TaskAction
     public void testRego() {
-        String location = pluginExtension.getLocation();
-        List<String> command =
-                Arrays.asList(location, "test", pluginExtension.getSrcDir(), pluginExtension.getTestDir());
+        OpaPluginConvention convention = getProject().getConvention().getPlugin(OpaPluginConvention.class);
+
+        String location = convention.getLocation();
+        List<String> command = Arrays.asList(location, "test", convention.getSrcDir(), convention.getTestDir());
 
         getProject().exec(execSpec -> {
             getLogger().debug("Running command {}", String.join(" ", command));
