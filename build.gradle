@@ -13,8 +13,30 @@ repositories {
     jcenter()
 }
 
+task createClasspathManifest {
+    def outputDir = file("$buildDir/$name")
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+    }
+}
+
 dependencies {
+    testCompile gradleTestKit()
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testRuntime files(createClasspathManifest)
+}
+
+sourceSets {
+    functionalTest {
+        java.srcDir file('src/testFunctional/java')
+        resources.srcDir file('src/testFunctional/resources')
+        compileClasspath += sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath += output + compileClasspath
+    }
 }
 
 gradlePlugin {
@@ -24,6 +46,7 @@ gradlePlugin {
             implementationClass = 'com.bisnode.opa.OpaPlugin'
         }
     }
+    testSourceSets sourceSets.functionalTest
 }
 
 pluginBundle {
@@ -38,5 +61,13 @@ pluginBundle {
         }
     }
 }
+
+task functionalTest(type: Test) {
+    group = 'verification'
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    mustRunAfter test
+}
+check.dependsOn functionalTest
 
 
