@@ -4,6 +4,15 @@ Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in G
 
 ## Install
 
+Simply add the plugin to your build.gradle `plugins` declaration:
+```
+plugins {
+    id 'com.bisnode.opa' version '0.1.0'
+}
+```
+For legacy versions of Gradle, see instructions on the
+[Gradle plugin directory](https://plugins.gradle.org/plugin/com.bisnode.opa)
+
 **Prerequisites**: OPA installed on same machine as the tasks are run, either on `$PATH` or pointed out by the 
 `opaLocation` configuration attribute (see Configuration below).
 
@@ -30,7 +39,6 @@ The following tasks are currently added by the plugin:
 
 To integrate policy tests into your regular Gradle pipeline you may add the `testRego` and/or `testRegoCoverage` tasks 
 as dependencies of the `check` task:
-
 ```
 check.dependsOn(testRego, testRegoCoverage)
 ```
