@@ -17,6 +17,7 @@ public class OpaPlugin implements Plugin<Project> {
         tasks.create("startOpa", StartOpaTask.class);
         tasks.create("stopOpa", StopOpaTask.class);
         tasks.create("testRego", TestRegoTask.class);
+        tasks.create("testRegoCoverage", TestRegoCoverageTask.class);
     }
 
 }
