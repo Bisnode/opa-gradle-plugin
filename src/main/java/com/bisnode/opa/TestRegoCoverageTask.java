@@ -2,7 +2,6 @@ package com.bisnode.opa;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 
