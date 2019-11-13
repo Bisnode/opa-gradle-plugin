@@ -22,7 +22,7 @@ opa {
 
 The following tasks are currently added by the plugin:
 * `testRego` - Runs `opa test {srcDir} {testDir}` .
-* `testRegoCoverage` Runs `opa test {srcDir} {testDir} --coverage` saving report in `build/report/opa` directory. 
+* `testRegoCoverage` - Runs `opa test {srcDir} {testDir} --coverage` saving report in `build/report/opa` directory. 
 * `startOpa` - Start OPA in background for subsequent tasks like integration tests. 
 * `stopOpa` - Stop OPA process started by `startOpa`.
 
