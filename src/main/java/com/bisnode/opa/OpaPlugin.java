@@ -1,8 +1,11 @@
 package com.bisnode.opa;
 
+import com.bisnode.opa.configuration.DefaultOpaConfiguration;
+import com.bisnode.opa.configuration.DefaultOpaPluginConvention;
+import com.bisnode.opa.configuration.OpaConfiguration;
+import com.bisnode.opa.configuration.OpaPluginConvention;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.tasks.TaskContainer;
 
 @SuppressWarnings("unused")
@@ -10,8 +13,9 @@ public class OpaPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        ExtensionContainer extensions = project.getExtensions();
-        extensions.create("opa", OpaPluginExtension.class);
+        OpaPluginConvention convention = new DefaultOpaPluginConvention(project);
+        project.getConvention().getPlugins().put("opa", convention);
+        project.getExtensions().create(OpaConfiguration.class, "opa", DefaultOpaConfiguration.class, convention);
 
         TaskContainer tasks = project.getTasks();
         tasks.create("startOpa", StartOpaTask.class);
