@@ -10,18 +10,18 @@ plugins {
     id 'com.bisnode.opa' version '0.1.1'
 }
 ```
-For legacy versions of Gradle, see instructions on the
-[Gradle plugin directory](https://plugins.gradle.org/plugin/com.bisnode.opa)
+For legacy versions of Gradle, see instructions in the
+[Gradle plugin directory](https://plugins.gradle.org/plugin/com.bisnode.opa).
 
 **Prerequisites**: OPA installed on same machine as the tasks are run, either on `$PATH` or pointed out by the 
-`opaLocation` configuration attribute (see Configuration below).
+`location` configuration attribute (see Configuration below).
 
 ## Configuration
 
 The following configuration properties are made available by the plugin:
 ```
 opa {
-    opaLocation = 'path/opa/executable'     // default: use opa on $PATH
+    location    = 'path/opa/executable'     // default: use opa on $PATH
     srcDir      = 'path/to/rego/src'        // default: src/main/rego
     testDir     = 'path/to/rego/tests/'     // default: src/test/rego
 }
