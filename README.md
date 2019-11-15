@@ -1,4 +1,6 @@
 # Open Policy Agent plugin for Gradle
+![](https://github.com/Bisnode/opa-gradle-plugin/workflows/build/badge.svg)
+[![codecov](https://codecov.io/gh/Bisnode/opa-gradle-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/Bisnode/opa-gradle-plugin)
 
 Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in Gradle builds.
 
