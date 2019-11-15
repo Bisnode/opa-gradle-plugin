@@ -1,5 +1,6 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'jacoco'
     id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
@@ -59,6 +60,13 @@ pluginBundle {
         opa {
             displayName = 'Open Policy Agent plugin for Gradle'
         }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
     }
 }
 
