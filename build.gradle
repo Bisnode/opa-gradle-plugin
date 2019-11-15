@@ -51,7 +51,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = 'https://www.bisnode.com'
+    website = 'https://github.com/Bisnode/opa-gradle-plugin'
     vcsUrl = 'https://github.com/Bisnode/opa-gradle-plugin'
     description = 'Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in Gradle builds.'
     tags = ['opa', 'openpolicyagent', 'test', 'testing', 'policy', 'policies', 'authorization']
