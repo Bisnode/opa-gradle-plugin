@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -133,7 +134,7 @@ public final class OpaToJunitConverter {
     }
 
     private static String nanosToSeconds(long nanos) {
-        return String.format("%.3f", nanos / 1_000_000_000.0);
+        return String.format(Locale.US, "%.3f", nanos / 1_000_000_000.0);
     }
 
     private static Map<String, Long> createCounter() {
