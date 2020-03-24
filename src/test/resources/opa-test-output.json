@@ -1,0 +1,237 @@
+[
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 5,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_any_input_with_a_non_regular_user_is_no_opinion",
+        "duration": 1118113
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 13,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_any_input_with_modifying_verb_is_denied",
+        "duration": 767167
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 22,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_any_input_with_modifying_verb_not_exec_is_denied_reason_message",
+        "duration": 1498551
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 33,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_create_exec_allowed_if_member_of_team",
+        "duration": 444361
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 50,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_create_exec_not_allowed_if_not_member_of_team",
+        "duration": 589920
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 67,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_any_input_with_empty_or_unknown_verb_is_denied",
+        "duration": 472691
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 74,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_no_resource_name_is_defined",
+        "duration": 764679
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 83,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_no_resource_name_is_defined_reason_message",
+        "duration": 1038786
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 92,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_no_group_is_denied",
+        "duration": 433926
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 96,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_no_matching_group_is_denied",
+        "duration": 490681
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 101,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_no_bisnode_email_is_denied",
+        "duration": 377743
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 105,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_non_default_namespace",
+        "duration": 362833
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 109,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_non_default_namespace_reason_message",
+        "duration": 477337
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 115,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_team_matching_resource_owner_modifying_action",
+        "fail": true,
+        "duration": 600281
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 126,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_team_not_matching_resource_owner_modifying_action",
+        "duration": 862539
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 137,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_team_not_matching_resource_owner_modifying_action_reason_message",
+        "duration": 706323
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 149,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_team_matching_deployment_owner_delete_action",
+        "fail": true,
+        "duration": 1289212
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 167,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_team_matching_deployment_owner_variations_delete_action",
+        "fail": true,
+        "duration": 532151
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 185,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_with_team_matching_pod_owner_delete_action",
+        "fail": true,
+        "duration": 583905
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 203,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_single_matching_team_is_allowed",
+        "fail": true,
+        "duration": 558076
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 226,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_input_one_of_many_team_is_allowed",
+        "fail": true,
+        "duration": 578959
+    },
+    {
+        "location": {
+            "file": "tbac-policy-test.rego",
+            "row": 250,
+            "col": 1
+        },
+        "package": "data.kubernetes.authz",
+        "name": "test_division_by_zero",
+        "error": {
+            "code": "eval_builtin_error",
+            "message": "div: divide by zero",
+            "location": {
+                "file": "tbac-policy-test.rego",
+                "row": 251,
+                "col": 40
+            }
+        },
+        "duration": 294354
+    }
+]
