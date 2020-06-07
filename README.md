@@ -31,11 +31,22 @@ opa {
 
 ## Tasks
 
-The following tasks are currently added by the plugin:
-* `testRego` - Runs `opa test {srcDir} {testDir}` .
+The plugin adds the following tasks:
+* `testRego` - Runs `opa test {srcDir} {testDir}` (see below).
 * `testRegoCoverage` - Runs `opa test {srcDir} {testDir} --coverage` saving report in `build/report/opa` directory. 
 * `startOpa` - Start OPA in background for subsequent tasks like integration tests. 
 * `stopOpa` - Stop OPA process started by `startOpa`.
+
+### testRego
+
+The `testRego` task runs the unit tests found in `testDir` with all policies provided in `srcDir`. If not provided, 
+these directories default to `src/main/rego` (rego policies) and `src/test/rego` (rego tests) respectively. 
+
+#### JUnit XML test results
+
+The `testRego` task automatically converts the OPA test command output into JUnit XML and writes the output to the
+`build/tests-results/opa` directory. This enables any tool or system (such as CI/CD servers) that knows how to parse
+JUnit test results to include the OPA test results when handling test outcomes, like when compiling test reports.
 
 ### Run Rego tests
 

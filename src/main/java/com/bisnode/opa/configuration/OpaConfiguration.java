@@ -1,5 +1,6 @@
 package com.bisnode.opa.configuration;
 
+@SuppressWarnings("unused")
 public interface OpaConfiguration {
 
     String getLocation();

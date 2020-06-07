@@ -2,6 +2,7 @@ package com.bisnode.opa;
 
 import com.bisnode.opa.configuration.OpaPluginConvention;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
 import javax.annotation.Nullable;
@@ -17,6 +18,13 @@ import java.util.Optional;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class TestRegoCoverageTask extends DefaultTask {
+
+    public TestRegoCoverageTask() {
+        setGroup("opa");
+        setDescription(
+                "Run OPA tests in testDir of any policies provided in srcDir, saving the coverage report from the run."
+        );
+    }
 
     @Nullable
     private String srcDir;
@@ -51,14 +59,16 @@ public abstract class TestRegoCoverageTask extends DefaultTask {
         }
     }
 
-    @Nullable
+    @InputDirectory
     public String getSrcDir() {
-        return srcDir;
+        return Optional.ofNullable(srcDir)
+                .orElse(getProject().getConvention().getPlugin(OpaPluginConvention.class).getSrcDir());
     }
 
-    @Nullable
+    @InputDirectory
     public String getTestDir() {
-        return testDir;
+        return Optional.ofNullable(testDir)
+                .orElse(getProject().getConvention().getPlugin(OpaPluginConvention.class).getTestDir());
     }
 
     public void setSrcDir(String srcDir) {
@@ -67,16 +77,6 @@ public abstract class TestRegoCoverageTask extends DefaultTask {
 
     public void setTestDir(String testDir) {
         this.testDir = testDir;
-    }
-
-    @Override
-    public String getGroup() {
-        return "opa";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Run OPA tests in testDir of any policies provided in srcDir, saving the coverage report from the run.";
     }
 
 }
