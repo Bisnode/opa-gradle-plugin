@@ -1,8 +1,8 @@
 package com.bisnode.opa.junit;
 
-import org.gradle.internal.impldep.com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.gradle.internal.impldep.com.fasterxml.jackson.annotation.JsonProperty;
-import org.gradle.internal.impldep.com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -22,6 +22,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -111,7 +112,10 @@ public final class OpaToJunitConverter {
     }
 
     @SuppressWarnings("OverlyBroadCatchBlock")
-    private static List<OpaTestCase> getOpaTestCases(String opaTestJson) {
+    private static List<OpaTestCase> getOpaTestCases(@Nullable String opaTestJson) {
+        if (opaTestJson == null || opaTestJson.trim().equals("null") || opaTestJson.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
         try {
             return Arrays.asList(objectMapper.readValue(opaTestJson, OpaTestCase[].class));
         } catch (IOException e) {

@@ -16,6 +16,14 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class StartOpaTask extends DefaultTask {
 
+    public StartOpaTask() {
+        setGroup("opa");
+        setDescription(
+                "Starts OPA in background to allow for subsequent tasks to query it (for integration tests or such). " +
+                "NOTE that you'll need to run the opaStop task to stop OPA after starting it with this task."
+        );
+    }
+
     @TaskAction
     public void startOpa() {
         OpaPluginConvention convention = getProject().getConvention().getPlugin(OpaPluginConvention.class);
@@ -52,20 +60,9 @@ public class StartOpaTask extends DefaultTask {
                 getLogger().error("{}", reader.lines().collect(Collectors.joining("\n")));
             } catch (IOException e) {
                 getLogger().error("Failed to start OPA and failed to read error stream", e);
-                return;
             }
             throw new RuntimeException("Failed to start OPA");
         }
     }
 
-    @Override
-    public String getGroup() {
-        return "opa";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Starts OPA in background to allow for subsequent tasks to query it (for integration tests or such). " +
-                "NOTE that you'll need to run the opaStop task to stop OPA after starting it with this task.";
-    }
 }

@@ -17,7 +17,7 @@ import static com.bisnode.opa.OpaPluginTestUtils.getRegoPolicyTest;
 import static com.bisnode.opa.OpaPluginUtils.toAbsoluteProjectPath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TestRegoCoverageTaskTest {
 

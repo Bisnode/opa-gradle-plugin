@@ -1,7 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'jacoco'
-    id 'com.gradle.plugin-publish' version '0.10.0'
+    id 'com.gradle.plugin-publish' version '0.12.0'
 }
 
 group 'com.bisnode.opa'
@@ -26,8 +26,11 @@ task createClasspathManifest {
 }
 
 dependencies {
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0'
+
     testCompile gradleTestKit()
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'junit', name: 'junit', version: '4.13'
     testRuntime files(createClasspathManifest)
 }
 
@@ -78,4 +81,7 @@ task functionalTest(type: Test) {
 }
 check.dependsOn functionalTest
 
-
+wrapper {
+    gradleVersion = '6.0'
+    distributionType = Wrapper.DistributionType.ALL
+}
