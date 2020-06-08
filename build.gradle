@@ -26,11 +26,12 @@ task createClasspathManifest {
 }
 
 dependencies {
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0'
 
     testCompile gradleTestKit()
-    testCompile group: 'junit', name: 'junit', version: '4.13'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine'
     testRuntime files(createClasspathManifest)
 }
 
@@ -66,6 +67,10 @@ pluginBundle {
     }
 }
 
+test {
+    useJUnitPlatform()
+}
+
 jacocoTestReport {
     reports {
         xml.enabled true
@@ -74,6 +79,7 @@ jacocoTestReport {
 }
 
 task functionalTest(type: Test) {
+    useJUnitPlatform()
     group = 'verification'
     testClassesDirs = sourceSets.functionalTest.output.classesDirs
     classpath = sourceSets.functionalTest.runtimeClasspath

@@ -2,41 +2,41 @@ package com.bisnode.opa;
 
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OpaPluginTest {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         project = ProjectBuilder.builder().build();
         project.getPluginManager().apply("com.bisnode.opa");
     }
 
-    @After
+    @AfterEach
     public void after() {
         OpaPluginUtils.stopOpaProcess(project);
     }
 
     @Test
     public void opaPluginAddsOpaStartTaskToProject() {
-        assertThat(project.getTasks().getByName("startOpa") instanceof StartOpaTask, is(true));
+        assertTrue(project.getTasks().getByName("startOpa") instanceof StartOpaTask);
     }
 
     @Test
     public void opaPluginAddsOpaStopTaskToProject() {
-        assertThat(project.getTasks().getByName("stopOpa") instanceof StopOpaTask, is(true));
+        assertTrue(project.getTasks().getByName("stopOpa") instanceof StopOpaTask);
     }
 
     @Test
     public void opaPluginAddsTestRegoTaskToProject() {
-        assertThat(project.getTasks().getByName("testRego") instanceof TestRegoTask, is(true));
+        assertTrue(project.getTasks().getByName("testRego") instanceof TestRegoTask);
     }
 
 }
