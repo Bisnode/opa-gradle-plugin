@@ -131,6 +131,53 @@ public class PluginFunctionalTest {
     }
 
     @Test
+    public void testProvidingTaskPropertiesOverridesDefaults() throws IOException {
+        String directory =  tmpDir.getAbsolutePath();
+        Path path = Paths.get(directory);
+        Path policyDirPath = path.resolve("policy");
+        File policyDir = new File(policyDirPath.toString());
+        assert policyDir.mkdir();
+
+        Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), policyDirPath.resolve("policy.rego"));
+        Files.copy(new ByteArrayInputStream(getRegoPolicyTest().getBytes(UTF_8)), policyDirPath.resolve("policy_test.rego"));
+
+        String buildFileContent = "opa {\n" +
+                "    srcDir '/tmp'\n" +
+                "    testDir '/tmp'\n" +
+                "}\n\n" +
+                "testRego {\n" +
+                "    srcDir '" + policyDirPath.toAbsolutePath().toString() + "'\n" +
+                "    testDir '" + policyDirPath.toAbsolutePath().toString() + "'\n" +
+                "}";
+
+        Files.write(buildFile.toPath(), buildFileContent.getBytes(UTF_8), StandardOpenOption.APPEND);
+
+        BuildResult result = prepareRunner(new StringWriter(), "testRego").build();
+        @Nullable BuildTask task = result.task(":testRego");
+
+        assertNotNull(task);
+        assertEquals(task.getOutcome(), TaskOutcome.SUCCESS);
+        assertNotNull(path.toFile());
+        assertNotNull(path.toFile().listFiles());
+
+        Path testResultPath = path.resolve("build/test-results/opa");
+        assertNotNull(testResultPath.toFile());
+        assertTrue(testResultPath.toFile().exists());
+
+        Path opaJunitXMLReportPath = testResultPath.resolve("TEST-opa-tests.xml");
+        assertNotNull(opaJunitXMLReportPath.toFile());
+        assertTrue(opaJunitXMLReportPath.toFile().exists());
+
+        Document document = readXmlDocument(opaJunitXMLReportPath.toFile());
+
+        Function<String, String> attributes = attributeRetriever(document);
+
+        assertEquals("1", attributes.apply("tests"));
+        assertEquals("0", attributes.apply("errors"));
+        assertEquals("0", attributes.apply("failures"));
+    }
+
+    @Test
     public void testRunningTestRegoCoverageTaskWithoutArgumentsWork() throws IOException {
         String directory = tmpDir.getAbsolutePath();
         String buildFileContent = "opa {\n" +
