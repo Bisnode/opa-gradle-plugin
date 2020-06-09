@@ -2,26 +2,26 @@ package com.bisnode.opa;
 
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StartOpaTaskTest {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         project = ProjectBuilder.builder().build();
         project.getPluginManager().apply("com.bisnode.opa");
     }
 
-    @After
+    @AfterEach
     public void after() {
         OpaPluginUtils.stopOpaProcess(project);
     }
@@ -29,7 +29,7 @@ public class StartOpaTaskTest {
     @Test
     public void taskIsInOpaGroup() {
         StartOpaTask task = (StartOpaTask) project.getTasks().getByName("startOpa");
-        assertThat(task.getGroup(), is("opa"));
+        assertEquals("opa", task.getGroup());
     }
 
     @Test
@@ -38,7 +38,7 @@ public class StartOpaTaskTest {
         startOpaTask.startOpa();
 
         @Nullable Object object = project.getExtensions().getExtraProperties().get("opaProcess");
-        assertThat(object instanceof Process, is(true));
+        assertTrue(object instanceof Process);
     }
 
 }

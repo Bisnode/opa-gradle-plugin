@@ -3,8 +3,9 @@ package com.bisnode.opa;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -16,14 +17,14 @@ import static com.bisnode.opa.OpaPluginTestUtils.getRegoPolicy;
 import static com.bisnode.opa.OpaPluginTestUtils.getRegoPolicyTest;
 import static com.bisnode.opa.OpaPluginUtils.toAbsoluteProjectPath;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestRegoCoverageTaskTest {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void before() {
         project = ProjectBuilder.builder().build();
         project.getPluginManager().apply("com.bisnode.opa");
@@ -32,13 +33,13 @@ public class TestRegoCoverageTaskTest {
     @Test
     public void canAddTaskToProject() {
         Task task = project.getTasks().getByName("testRegoCoverage");
-        assertThat(task instanceof TestRegoCoverageTask, is(true));
+        assertTrue(task instanceof TestRegoCoverageTask);
     }
 
     @Test
     public void taskIsInOpaGroup() {
         TestRegoCoverageTask task = (TestRegoCoverageTask) project.getTasks().getByName("testRegoCoverage");
-        assertThat(task.getGroup(), is("opa"));
+        assertEquals("opa", task.getGroup());
     }
 
     @Test
@@ -54,7 +55,7 @@ public class TestRegoCoverageTaskTest {
         task.testRegoCoverage();
 
         String reportFile = project.getRootDir() + "/build/reports/opa/opa-coverage.json";
-        assertThat(new File(reportFile).exists(), is(true));
+        assertTrue(new File(reportFile).exists());
     }
 
 }

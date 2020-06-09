@@ -4,10 +4,10 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -30,29 +30,31 @@ import static com.bisnode.test.OpaPluginFunctionalTestUtils.getRegoPolicy;
 import static com.bisnode.test.OpaPluginFunctionalTestUtils.getRegoPolicyTest;
 import static com.bisnode.test.OpaPluginFunctionalTestUtils.getRegoPolicyTestFail;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings({"resource", "DuplicatedCode"})
+@SuppressWarnings({"DuplicatedCode"})
 public class PluginFunctionalTest {
 
-    @Rule
-    public TemporaryFolder testProjectDir = new TemporaryFolder();
+    @TempDir
+    File tmpDir;
+
     private File buildFile;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         String buildFileContent = "plugins {\n" +
                 "    id 'com.bisnode.opa'\n" +
                 "}\n";
-        buildFile = testProjectDir.newFile("build.gradle");
+
+        buildFile = new File(tmpDir, "build.gradle");
         Files.write(buildFile.toPath(), buildFileContent.getBytes(UTF_8));
     }
 
     @Test
     public void testRunningSuccessfulTestProducesJUnitXMLOutput() throws IOException {
-        String directory = testProjectDir.getRoot().getAbsolutePath();
+        String directory =  tmpDir.getAbsolutePath();
 
         Path path = Paths.get(directory);
         Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), path.resolve("policy.rego"));
@@ -67,31 +69,31 @@ public class PluginFunctionalTest {
         BuildResult result = prepareRunner(new StringWriter(), "testRego").build();
         @Nullable BuildTask task = result.task(":testRego");
 
-        assertThat(task, is(notNullValue()));
-        assertThat(Objects.requireNonNull(task).getOutcome(), is(TaskOutcome.SUCCESS));
-        assertThat(path.toFile(), notNullValue());
-        assertThat(path.toFile().listFiles(), notNullValue());
+        assertNotNull(task);
+        assertEquals(task.getOutcome(), TaskOutcome.SUCCESS);
+        assertNotNull(path.toFile());
+        assertNotNull(path.toFile().listFiles());
 
         Path testResultPath = path.resolve("build/test-results/opa");
-        assertThat(testResultPath.toFile(), notNullValue());
-        assertThat(testResultPath.toFile().exists(), is(true));
+        assertNotNull(testResultPath.toFile());
+        assertTrue(testResultPath.toFile().exists());
 
         Path opaJunitXMLReportPath = testResultPath.resolve("TEST-opa-tests.xml");
-        assertThat(opaJunitXMLReportPath.toFile(), notNullValue());
-        assertThat(opaJunitXMLReportPath.toFile().exists(), is(true));
+        assertNotNull(opaJunitXMLReportPath.toFile());
+        assertTrue(opaJunitXMLReportPath.toFile().exists());
 
         Document document = readXmlDocument(opaJunitXMLReportPath.toFile());
 
         Function<String, String> attributes = attributeRetriever(document);
 
-        assertThat(attributes.apply("tests"), is("1"));
-        assertThat(attributes.apply("errors"), is("0"));
-        assertThat(attributes.apply("failures"), is("0"));
+        assertEquals("1", attributes.apply("tests"));
+        assertEquals("0", attributes.apply("errors"));
+        assertEquals("0", attributes.apply("failures"));
     }
 
     @Test
     public void testRunningFailingTestProducesJUnitXMLOutput() throws IOException {
-        String directory = testProjectDir.getRoot().getAbsolutePath();
+        String directory = tmpDir.getAbsolutePath();
 
         Path path = Paths.get(directory);
         Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), path.resolve("policy.rego"));
@@ -106,31 +108,31 @@ public class PluginFunctionalTest {
         BuildResult result = prepareRunner(new StringWriter(), "testRego").buildAndFail();
         @Nullable BuildTask task = result.task(":testRego");
 
-        assertThat(task, is(notNullValue()));
-        assertThat(Objects.requireNonNull(task).getOutcome(), is(TaskOutcome.FAILED));
-        assertThat(path.toFile(), notNullValue());
-        assertThat(path.toFile().listFiles(), notNullValue());
+        assertNotNull(task);
+        assertEquals(task.getOutcome(), TaskOutcome.FAILED);
+        assertNotNull(path.toFile());
+        assertNotNull(path.toFile().listFiles());
 
         Path testResultPath = path.resolve("build/test-results/opa");
-        assertThat(testResultPath.toFile(), notNullValue());
-        assertThat(testResultPath.toFile().exists(), is(true));
+        assertNotNull(testResultPath.toFile());
+        assertTrue(testResultPath.toFile().exists());
 
         Path opaJunitXMLReportPath = testResultPath.resolve("TEST-opa-tests.xml");
-        assertThat(opaJunitXMLReportPath.toFile(), notNullValue());
-        assertThat(opaJunitXMLReportPath.toFile().exists(), is(true));
+        assertNotNull(opaJunitXMLReportPath.toFile());
+        assertTrue(opaJunitXMLReportPath.toFile().exists());
 
         Document document = readXmlDocument(opaJunitXMLReportPath.toFile());
 
         Function<String, String> attributes = attributeRetriever(document);
 
-        assertThat(attributes.apply("tests"), is("1"));
-        assertThat(attributes.apply("errors"), is("0"));
-        assertThat(attributes.apply("failures"), is("1"));
+        assertEquals("1", attributes.apply("tests"));
+        assertEquals("0", attributes.apply("errors"));
+        assertEquals("1", attributes.apply("failures"));
     }
 
     @Test
     public void testRunningTestRegoCoverageTaskWithoutArgumentsWork() throws IOException {
-        String directory = testProjectDir.getRoot().getAbsolutePath();
+        String directory = tmpDir.getAbsolutePath();
         String buildFileContent = "opa {\n" +
                 "    srcDir '" + directory + "'\n" +
                 "    testDir '" + directory + "'\n" +
@@ -140,13 +142,13 @@ public class PluginFunctionalTest {
         BuildResult result =prepareRunner(new StringWriter(), "testRegoCoverage").build();
         @Nullable BuildTask task = result.task(":testRegoCoverage");
 
-        assertThat(task, is(notNullValue()));
-        assertThat(Objects.requireNonNull(task).getOutcome(), is(TaskOutcome.SUCCESS));
+        assertNotNull(task);
+        assertEquals(Objects.requireNonNull(task).getOutcome(), TaskOutcome.SUCCESS);
     }
 
     private GradleRunner prepareRunner(StringWriter writer, String... tasks) {
         return GradleRunner.create()
-                .withProjectDir(testProjectDir.getRoot())
+                .withProjectDir(tmpDir)
                 .forwardStdOutput(writer)
                 .forwardStdError(writer)
                 .withPluginClasspath()

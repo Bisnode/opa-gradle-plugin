@@ -1,8 +1,9 @@
 package com.bisnode.opa.junit;
 
 import org.gradle.internal.impldep.com.google.common.io.Files;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -16,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OpaToJunitConverterTest {
 
@@ -25,7 +25,7 @@ public class OpaToJunitConverterTest {
 
     private static Element document;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupClass() {
         String testJson = getOpaTestJson();
         document = OpaToJunitConverter.fromOpaTestJson(testJson).getDocumentElement();
@@ -33,33 +33,33 @@ public class OpaToJunitConverterTest {
 
     @Test
     public void conversionCreatesTestSuites() {
-        assertThat(document.getTagName(), is("testsuites"));
-        assertThat(document.getAttribute("tests"), is("22"));
-        assertThat(document.getAttribute("errors"), is("1"));
-        assertThat(document.getAttribute("failures"), is("6"));
-        assertThat(document.getAttribute("time"), is("0.015"));
+        assertEquals("testsuites", document.getTagName());
+        assertEquals("22", document.getAttribute("tests"));
+        assertEquals("1", document.getAttribute("errors"));
+        assertEquals("6", document.getAttribute("failures"));
+        assertEquals("0.015", document.getAttribute("time"));
     }
 
     @Test
     public void conversionCreatesTestSuiteTestCases() {
         Node testsuite = document.getChildNodes().item(0);
-        assertThat(testsuite.getNodeName(), is("testsuite"));
+        assertEquals("testsuite", testsuite.getNodeName());
 
         List<Element> testcases = asElementList(document.getFirstChild().getChildNodes());
 
-        assertThat(testcases.size(), is(22));
+        assertEquals(22, testcases.size());
 
         long errors = testcases.stream()
                 .filter(el -> el.getFirstChild() != null && "error".equals(el.getFirstChild().getNodeName()))
                 .count();
 
-        assertThat(errors, is(1L));
+        assertEquals(1L, errors);
 
         long failures = testcases.stream()
                 .filter(el -> el.getFirstChild() != null && "failure".equals(el.getFirstChild().getNodeName()))
                 .count();
 
-        assertThat(failures, is(6L));
+        assertEquals(6L, failures);
     }
 
     private static String getOpaTestJson() {
