@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [//]: # (### Changed)
 [//]: # (### Removed)
 
+## [0.2.0] - 2020-06-09
+### Changed
+- Complete rewrite of the `testRego` task, now not just failing the build on test failures or errors but actually translating the test results into formats recognizable both by Gradle and by CI/CD systems by exporing the test results into JUnit XML reports. This allows for OPA/Rego tests to be both tested and reported like any other Gradle tests.
+- Task configuration may now override "base" configuration (like `srcDir` and `testDir`) on a per task basis. 
+- Tons of internal improvements, tests and fixes.
+
 ## [0.1.1] - 2019-11-14
 ### Added
 - Install/usage instructions to README now that plugin has been approved for 
