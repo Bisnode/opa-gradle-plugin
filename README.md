@@ -48,6 +48,9 @@ The `testRego` task automatically converts the OPA test command output into JUni
 `build/tests-results/opa` directory. This enables any tool or system (such as CI/CD servers) that knows how to parse
 JUnit test results to include the OPA test results when handling test outcomes, like when compiling test reports.
 
+Example test report output in Atlassian Bamboo:
+![Example test report output](docs/resources/bamboo_test_results.png?raw=true)
+
 ### Run Rego tests
 
 To integrate policy tests into your regular Gradle pipeline you may add the `testRego` and/or `testRegoCoverage` tasks 
