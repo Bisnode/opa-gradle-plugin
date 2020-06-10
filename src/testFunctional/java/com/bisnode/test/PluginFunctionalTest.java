@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings({"DuplicatedCode"})
+@SuppressWarnings("DuplicatedCode")
 public class PluginFunctionalTest {
 
     @TempDir
@@ -60,17 +60,50 @@ public class PluginFunctionalTest {
         Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), path.resolve("policy.rego"));
         Files.copy(new ByteArrayInputStream(getRegoPolicyTest().getBytes(UTF_8)), path.resolve("policy_test.rego"));
 
-        String buildFileContent = "opa {\n" +
-                "    srcDir '" + directory + "'\n" +
-                "    testDir '" + directory + "'\n" +
-                "}";
-        Files.write(buildFile.toPath(), buildFileContent.getBytes(UTF_8), StandardOpenOption.APPEND);
+        Files.write(buildFile.toPath(), getOpaBlockConfig(directory).getBytes(UTF_8), StandardOpenOption.APPEND);
 
         BuildResult result = prepareRunner(new StringWriter(), "testRego").build();
         @Nullable BuildTask task = result.task(":testRego");
 
         assertNotNull(task);
-        assertEquals(task.getOutcome(), TaskOutcome.SUCCESS);
+        assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
+        assertNotNull(path.toFile());
+        assertNotNull(path.toFile().listFiles());
+
+        Path testResultPath = path.resolve("build/test-results/opa");
+        assertNotNull(testResultPath.toFile());
+        assertTrue(testResultPath.toFile().exists());
+
+        Path opaJunitXMLReportPath = testResultPath.resolve("TEST-opa-tests.xml");
+        assertNotNull(opaJunitXMLReportPath.toFile());
+        assertTrue(opaJunitXMLReportPath.toFile().exists());
+
+        Document document = readXmlDocument(opaJunitXMLReportPath.toFile());
+
+        Function<String, String> attributes = attributeRetriever(document);
+
+        assertEquals("1", attributes.apply("tests"));
+        assertEquals("0", attributes.apply("errors"));
+        assertEquals("0", attributes.apply("failures"));
+    }
+
+    @Test
+    public void testRunningTestWithExistingReportsDirectoryWorks() throws IOException {
+        String directory =  tmpDir.getAbsolutePath();
+
+        Path path = Paths.get(directory);
+        Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), path.resolve("policy.rego"));
+        Files.copy(new ByteArrayInputStream(getRegoPolicyTest().getBytes(UTF_8)), path.resolve("policy_test.rego"));
+
+        Files.write(buildFile.toPath(), getOpaBlockConfig(directory).getBytes(UTF_8), StandardOpenOption.APPEND);
+
+        Files.createDirectories(buildFile.toPath().getParent().resolve("build/test-results/opa"));
+
+        BuildResult result = prepareRunner(new StringWriter(), "testRego").build();
+        @Nullable BuildTask task = result.task(":testRego");
+
+        assertNotNull(task);
+        assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
         assertNotNull(path.toFile());
         assertNotNull(path.toFile().listFiles());
 
@@ -99,17 +132,13 @@ public class PluginFunctionalTest {
         Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), path.resolve("policy.rego"));
         Files.copy(new ByteArrayInputStream(getRegoPolicyTestFail().getBytes(UTF_8)), path.resolve("policy_test.rego"));
 
-        String buildFileContent = "opa {\n" +
-                "    srcDir '" + directory + "'\n" +
-                "    testDir '" + directory + "'\n" +
-                "}";
-        Files.write(buildFile.toPath(), buildFileContent.getBytes(UTF_8), StandardOpenOption.APPEND);
+        Files.write(buildFile.toPath(), getOpaBlockConfig(directory).getBytes(UTF_8), StandardOpenOption.APPEND);
 
         BuildResult result = prepareRunner(new StringWriter(), "testRego").buildAndFail();
         @Nullable BuildTask task = result.task(":testRego");
 
         assertNotNull(task);
-        assertEquals(task.getOutcome(), TaskOutcome.FAILED);
+        assertEquals(TaskOutcome.FAILED, task.getOutcome());
         assertNotNull(path.toFile());
         assertNotNull(path.toFile().listFiles());
 
@@ -141,13 +170,10 @@ public class PluginFunctionalTest {
         Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), policyDirPath.resolve("policy.rego"));
         Files.copy(new ByteArrayInputStream(getRegoPolicyTest().getBytes(UTF_8)), policyDirPath.resolve("policy_test.rego"));
 
-        String buildFileContent = "opa {\n" +
-                "    srcDir '/tmp'\n" +
-                "    testDir '/tmp'\n" +
-                "}\n\n" +
+        String buildFileContent = getOpaBlockConfig("/tmp") + "\n\n" +
                 "testRego {\n" +
-                "    srcDir '" + policyDirPath.toAbsolutePath().toString() + "'\n" +
-                "    testDir '" + policyDirPath.toAbsolutePath().toString() + "'\n" +
+                "    srcDir '" + policyDirPath.toAbsolutePath() + "'\n" +
+                "    testDir '" + policyDirPath.toAbsolutePath() + "'\n" +
                 "}";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes(UTF_8), StandardOpenOption.APPEND);
@@ -156,7 +182,7 @@ public class PluginFunctionalTest {
         @Nullable BuildTask task = result.task(":testRego");
 
         assertNotNull(task);
-        assertEquals(task.getOutcome(), TaskOutcome.SUCCESS);
+        assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
         assertNotNull(path.toFile());
         assertNotNull(path.toFile().listFiles());
 
@@ -190,7 +216,7 @@ public class PluginFunctionalTest {
         @Nullable BuildTask task = result.task(":testRegoCoverage");
 
         assertNotNull(task);
-        assertEquals(Objects.requireNonNull(task).getOutcome(), TaskOutcome.SUCCESS);
+        assertEquals(TaskOutcome.SUCCESS, Objects.requireNonNull(task).getOutcome());
     }
 
     private GradleRunner prepareRunner(StringWriter writer, String... tasks) {
@@ -200,6 +226,13 @@ public class PluginFunctionalTest {
                 .forwardStdError(writer)
                 .withPluginClasspath()
                 .withArguments(tasks);
+    }
+
+    private static String getOpaBlockConfig(String directory) {
+        return "opa {\n" +
+                "    srcDir '" + directory + "'\n" +
+                "    testDir '" + directory + "'\n" +
+                "}";
     }
 
     private static Document readXmlDocument(File file) {

@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,6 +51,7 @@ public class TestRegoTask extends DefaultTask {
         List<String> command = Arrays.asList(location, "test", "--format=json", src, testSrc);
 
         Process process;
+        int exitCode;
         try {
             logger.debug("Running command {}", String.join(" ", command));
             process = new ProcessBuilder()
@@ -57,30 +59,35 @@ public class TestRegoTask extends DefaultTask {
                     .command(command)
                     .start();
 
-            int exitCode = process.waitFor();
-
-            try (BufferedReader reader = bufferedInputReader(process.getInputStream())) {
-                String output = reader.lines().collect(Collectors.joining("\n"));
-                Document document = OpaToJunitConverter.fromOpaTestJson(output);
-
-                String targetReport = getProject().getBuildDir().getAbsolutePath() + "/test-results/opa/";
-                if (!new File(targetReport).mkdirs()) {
-                    throw new IOException("Could not create test results directory " + targetReport);
-                }
-
-                try (OutputStream out = new FileOutputStream(targetReport + "TEST-opa-tests.xml")) {
-                    OpaToJunitConverter.write(document, out);
-                }
-
-                if (exitCode != 0) {
-                    throw new TestExecutionException(output);
-                }
-            } catch (IOException e) {
-                throw new TestExecutionException("Failed to read input stream", e);
-            }
+            exitCode = process.waitFor();
 
         } catch (IOException | InterruptedException e) {
             throw new TestExecutionException("Failed to start OPA process for tests", e);
+        }
+
+        String output;
+        try (BufferedReader reader = bufferedInputReader(process.getInputStream())) {
+            output = reader.lines().collect(Collectors.joining("\n"));
+        } catch (IOException e) {
+            throw new TestExecutionException("Failed to read input stream from OPA process");
+        }
+
+        String targetReport = getProject().getBuildDir().getAbsolutePath() + "/test-results/opa/";
+        File tagetReportDir = new File(targetReport);
+        if (!tagetReportDir.exists() && !tagetReportDir.mkdirs()) {
+            throw new TestExecutionException("Could not create test results directory " + targetReport);
+        }
+
+        Document document = OpaToJunitConverter.fromOpaTestJson(output);
+        try (OutputStream out = new FileOutputStream(targetReport + "TEST-opa-tests.xml")) {
+            OpaToJunitConverter.write(document, out);
+        } catch (@SuppressWarnings("OverlyBroadCatchBlock") IOException e) {
+            throw new TestExecutionException(
+                    "Could not find, create or write to file " + targetReport + "TEST-opa-tests.xml");
+        }
+
+        if (exitCode != 0) {
+            throw new TestExecutionException(output);
         }
     }
 
