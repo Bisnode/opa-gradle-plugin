@@ -9,7 +9,7 @@ Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in G
 Simply add the plugin to your build.gradle `plugins` declaration:
 ```
 plugins {
-    id 'com.bisnode.opa' version '0.2.0'
+    id 'com.bisnode.opa' version '0.2.1'
 }
 ```
 For legacy versions of Gradle, see instructions in the
