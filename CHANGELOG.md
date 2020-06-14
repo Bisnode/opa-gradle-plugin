@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [//]: # (### Changed)
 [//]: # (### Removed)
 
+## [0.2.1] - 2020-06-14
+### Changed
+- GH-14 Fix "Failed to read input stream" bug that was triggered on non-empty test-results directory.
+
 ## [0.2.0] - 2020-06-09
 ### Changed
 - Complete rewrite of the `testRego` task, now not just failing the build on test failures or errors but actually translating the test results into formats recognizable both by Gradle and by CI/CD systems by exporing the test results into JUnit XML reports. This allows for OPA/Rego tests to be both tested and reported like any other Gradle tests.
