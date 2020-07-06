@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [//]: # (### Changed)
 [//]: # (### Removed)
 
+## [0.3.0] - 2020-07-06
+### Added
+- GH-15 Make testRego task output `opa -v`-like summary when invoked with `--info`
+
+## [0.2.2] - 2020-07-06
+### Changed
+- Refactor TestRegoTask
+- GH-18 Use dedicated library to output JUnit XML
+
 ## [0.2.1] - 2020-06-14
 ### Changed
 - GH-14 Fix "Failed to read input stream" bug that was triggered on non-empty test-results directory.

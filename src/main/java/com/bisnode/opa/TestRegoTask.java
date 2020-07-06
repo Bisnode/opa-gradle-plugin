@@ -5,6 +5,7 @@ import com.bisnode.opa.process.OpaTestProcess;
 import com.bisnode.opa.process.ProcessConfiguration;
 import com.bisnode.opa.process.ProcessExecutionResult;
 import com.bisnode.opa.testformats.junit.JUnitXml;
+import com.bisnode.opa.testformats.opa.OpaVerboseSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.InputDirectory;
@@ -38,6 +39,8 @@ public class TestRegoTask extends DefaultTask {
 
         writeToFile(testResultsPath(), asJUnitXml(processExecutionResult));
 
+        getLogger().info(asOpaVerbose(processExecutionResult));
+
         if (processExecutionResult.getExitCode() != 0) {
             throw new TestExecutionException(processExecutionResult.getOutput());
         }
@@ -53,6 +56,15 @@ public class TestRegoTask extends DefaultTask {
             Files.write(filePath, output.getBytes());
         } catch (IOException e) {
             throw new TestExecutionException("Could not write to file " + filePath.toString(), e);
+        }
+    }
+
+    private String asOpaVerbose(ProcessExecutionResult processExecutionResult) {
+        try {
+            OpaTestResults opaTestResults = OpaTestResults.fromJson(processExecutionResult.getOutput());
+            return OpaVerboseSummary.of(opaTestResults).summary();
+        } catch (JsonProcessingException e) {
+            throw new TestExecutionException("Could not parse test command output", e);
         }
     }
 

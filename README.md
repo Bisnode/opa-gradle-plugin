@@ -11,7 +11,7 @@ Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in G
 Simply add the plugin to your build.gradle `plugins` declaration:
 ```
 plugins {
-    id 'com.bisnode.opa' version '0.2.1'
+    id 'com.bisnode.opa' version '0.3.0'
 }
 ```
 For legacy versions of Gradle, see instructions in the
@@ -43,6 +43,11 @@ The plugin adds the following tasks:
 
 The `testRego` task runs the unit tests found in `testDir` with all policies provided in `srcDir`. If not provided,
 these directories default to `src/main/rego` (rego policies) and `src/test/rego` (rego tests) respectively.
+
+When invoked with `--info` output similar to `--info` is printed to console.
+
+Example:
+![Example testRego output](docs/resources/summary.png?raw=true)
 
 #### JUnit XML test results
 
