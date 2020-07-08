@@ -89,5 +89,4 @@ public class TestRegoTask extends DefaultTask {
         this.testDir = testDir;
     }
 
-
 }
