@@ -7,7 +7,6 @@ import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -30,11 +29,11 @@ import static com.bisnode.test.OpaPluginFunctionalTestUtils.getRegoPolicy;
 import static com.bisnode.test.OpaPluginFunctionalTestUtils.getRegoPolicyTest;
 import static com.bisnode.test.OpaPluginFunctionalTestUtils.getRegoPolicyTestFail;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("DuplicatedCode")
+@SuppressWarnings({"DuplicatedCode", "VisibilityModifier"})
 public class PluginFunctionalTest {
 
     @TempDir
@@ -54,7 +53,7 @@ public class PluginFunctionalTest {
 
     @Test
     public void testRunningSuccessfulTestProducesJUnitXMLOutput() throws IOException {
-        String directory =  tmpDir.getAbsolutePath();
+        String directory = tmpDir.getAbsolutePath();
 
         Path path = Paths.get(directory);
         Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), path.resolve("policy.rego"));
@@ -89,7 +88,7 @@ public class PluginFunctionalTest {
 
     @Test
     public void testRunningTestWithExistingReportsDirectoryWorks() throws IOException {
-        String directory =  tmpDir.getAbsolutePath();
+        String directory = tmpDir.getAbsolutePath();
 
         Path path = Paths.get(directory);
         Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), path.resolve("policy.rego"));
@@ -161,7 +160,7 @@ public class PluginFunctionalTest {
 
     @Test
     public void testProvidingTaskPropertiesOverridesDefaults() throws IOException {
-        String directory =  tmpDir.getAbsolutePath();
+        String directory = tmpDir.getAbsolutePath();
         Path path = Paths.get(directory);
         Path policyDirPath = path.resolve("policy");
         File policyDir = new File(policyDirPath.toString());
@@ -212,7 +211,7 @@ public class PluginFunctionalTest {
                 "}";
         Files.write(buildFile.toPath(), buildFileContent.getBytes(UTF_8), StandardOpenOption.APPEND);
 
-        BuildResult result =prepareRunner(new StringWriter(), "testRegoCoverage").build();
+        BuildResult result = prepareRunner(new StringWriter(), "testRegoCoverage").build();
         @Nullable BuildTask task = result.task(":testRegoCoverage");
 
         assertNotNull(task);
