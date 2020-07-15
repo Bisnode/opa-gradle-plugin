@@ -9,11 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [//]: # (### Changed)
 [//]: # (### Removed)
 
-## [0.3.0] - 2020-07-06
+## [0.3.0] - 2020-07-16
 ### Added
 - GH-15 Make testRego task output `opa -v`-like summary when invoked with `--info`
 
-## [0.2.2] - 2020-07-06
 ### Changed
 - Refactor TestRegoTask
 - GH-18 Use dedicated library to output JUnit XML
