@@ -28,7 +28,7 @@ task createClasspathManifest {
 
 dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.2'
     implementation 'com.bisnode.opa:opa-test-result-formatter:0.1.2'
 
     testCompile gradleTestKit()
