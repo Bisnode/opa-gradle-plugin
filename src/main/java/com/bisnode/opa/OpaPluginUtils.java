@@ -6,6 +6,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension.UnknownPropertyException;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 
 final class OpaPluginUtils {
 
@@ -18,9 +19,9 @@ final class OpaPluginUtils {
             if (object instanceof Process) {
                 Process process = (Process) object;
                 process.destroy();
-                return true;
+                return process.waitFor(5, TimeUnit.SECONDS);
             }
-        } catch (UnknownPropertyException ignored) {
+        } catch (UnknownPropertyException | InterruptedException ignored) {
         }
         return false;
     }
