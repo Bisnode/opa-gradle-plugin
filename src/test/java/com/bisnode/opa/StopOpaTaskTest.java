@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,13 +32,13 @@ public class StopOpaTaskTest {
     }
 
     @Test
-    public void taskStopsOpaProcess() throws IOException, InterruptedException {
+    public void taskStopsOpaProcess() throws IOException {
         Optional<String> opaBinaryPath = getOpaBinaryPath();
         assertTrue(opaBinaryPath.isPresent());
         Process process = new ProcessBuilder().directory(project.getRootDir()).command(opaBinaryPath.get(), "run", "-s").start();
         project.getExtensions().getExtraProperties().set("opaProcess", process);
 
-        assertFalse(process.waitFor(3, TimeUnit.SECONDS));
+        assertTrue(process.isAlive());
 
         StopOpaTask task = (StopOpaTask) project.getTasks().getByName("stopOpa");
         task.stopOpa();
