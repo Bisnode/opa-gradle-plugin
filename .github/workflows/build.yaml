@@ -16,7 +16,7 @@ jobs:
       - name: Install opa
         run: sudo mv opa /usr/local/bin/ && sudo chmod +x /usr/local/bin/opa
       - name: Build plugin
-        run: ./gradlew build --info jacocoTestReport
+        run: ./gradlew build jacocoTestReport
       - uses: actions/upload-artifact@v1
         with:
           name: opa-gradle-plugin
