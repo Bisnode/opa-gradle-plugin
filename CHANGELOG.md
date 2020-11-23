@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [//]: # (### Changed)
 [//]: # (### Removed)
 
-## [0.3.1] - 2020-11-22
+## [0.3.1] - 2020-11-23
 ### Changed
 - GH-28 OPA process' output is now consumed and logged on info level, so the subprocess doesn't hang anymore
 - startOpa task now waits for OPA server to initialize
-- supplied OPA binary as test resource
 - enabled test in `StopOpaTaskTest`
+- for now, tests rely on `opa` in `$PATH`
 
 ## [0.3.0] - 2020-07-16
 ### Added

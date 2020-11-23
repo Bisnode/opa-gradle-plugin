@@ -33,9 +33,7 @@ public class StopOpaTaskTest {
 
     @Test
     public void taskStopsOpaProcess() throws IOException {
-        Optional<String> opaBinaryPath = getOpaBinaryPath();
-        assertTrue(opaBinaryPath.isPresent());
-        Process process = new ProcessBuilder().directory(project.getRootDir()).command(opaBinaryPath.get(), "run", "-s").start();
+        Process process = new ProcessBuilder().directory(project.getRootDir()).command("opa", "run", "-s").start();
         project.getExtensions().getExtraProperties().set("opaProcess", process);
 
         assertTrue(process.isAlive());
@@ -49,10 +47,6 @@ public class StopOpaTaskTest {
 
         assertNotNull(opaProcess);
         assertFalse(opaProcess.isAlive());
-    }
-
-    private Optional<String> getOpaBinaryPath() {
-        return Optional.ofNullable(getClass().getClassLoader().getResource("opa")).map(URL::getPath);
     }
 
 }

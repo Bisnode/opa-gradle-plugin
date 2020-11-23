@@ -40,9 +40,6 @@ public class StartOpaTaskTest {
     @Test
     public void opaPluginStartTaskSavesProcessInExtProperties() throws IOException {
         OpaPluginConvention convention = project.getConvention().getPlugin(OpaPluginConvention.class);
-        Optional<String> opaBinaryPath = getOpaBinaryPath();
-        assertTrue(opaBinaryPath.isPresent());
-        convention.setLocation(opaBinaryPath.get());
         convention.setSrcDir(getPathToTmpFolder());
 
         StartOpaTask startOpaTask = (StartOpaTask) project.getTasks().getByName("startOpa");
@@ -50,10 +47,6 @@ public class StartOpaTaskTest {
 
         @Nullable Object object = project.getExtensions().getExtraProperties().get("opaProcess");
         assertTrue(object instanceof Process);
-    }
-
-    private Optional<String> getOpaBinaryPath() {
-        return Optional.ofNullable(getClass().getClassLoader().getResource("opa")).map(URL::getPath);
     }
 
     private String getPathToTmpFolder() throws IOException {

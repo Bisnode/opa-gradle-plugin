@@ -76,7 +76,7 @@ public class StartOpaTask extends DefaultTask {
 
     private void spawnOutputConsumerThread(Process process, CountDownLatch latch) {
         new Thread(() -> {
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream(), UTF_8))) {
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     if (line.contains("Initializing server")) {
@@ -85,7 +85,9 @@ public class StartOpaTask extends DefaultTask {
                     getLogger().info("[OPA] {}", line);
                 }
             } catch (IOException e) {
-                getLogger().error("IOException while reading OPA's stdout", e);
+                if(!"Stream closed".equals(e.getMessage())) {
+                    getLogger().warn("IOException while reading OPA's stdout", e);
+                }
             }
         }).start();
     }

@@ -42,9 +42,6 @@ public class OpaIOTest {
     void shouldNotHangOnOPAOutputBufferOverflow() throws IOException, InterruptedException {
         //given
         OpaPluginConvention convention = project.getConvention().getPlugin(OpaPluginConvention.class);
-        Optional<String> opaBinaryPath = getOpaBinaryPath();
-        assertTrue(opaBinaryPath.isPresent());
-        convention.setLocation(opaBinaryPath.get());
         convention.setSrcDir(getPathToTmpFolder());
 
         StartOpaTask startOpaTask = (StartOpaTask) project.getTasks().getByName("startOpa");
@@ -78,10 +75,6 @@ public class OpaIOTest {
                 // noop
             }
         }
-    }
-
-    private Optional<String> getOpaBinaryPath() {
-        return Optional.ofNullable(getClass().getClassLoader().getResource("opa")).map(URL::getPath);
     }
 
 }
