@@ -3,17 +3,15 @@ package com.bisnode.opa;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
-
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StopOpaTaskTest {
 
@@ -32,7 +30,6 @@ public class StopOpaTaskTest {
     }
 
     @Test
-    @Disabled("Unit test should not depend on OPA binary - move to functional test or mock")
     public void taskStopsOpaProcess() throws IOException {
         Process process = new ProcessBuilder().directory(project.getRootDir()).command("opa", "run", "-s").start();
         project.getExtensions().getExtraProperties().set("opaProcess", process);
