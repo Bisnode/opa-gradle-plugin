@@ -3,15 +3,19 @@
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/Bisnode/opa-gradle-plugin.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Bisnode/opa-gradle-plugin/alerts/)
 [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/Bisnode/opa-gradle-plugin.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Bisnode/opa-gradle-plugin/context:java)
 [![codecov](https://codecov.io/gh/Bisnode/opa-gradle-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/Bisnode/opa-gradle-plugin)
+[![Version](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/bisnode/opa/opa-gradle-plugin/maven-metadata.xml.svg?label=gradle)](https://plugins.gradle.org/plugin/com.bisnode.opa)
 
 Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in Gradle builds.
 
 ## Install
 
 Simply add the plugin to your build.gradle `plugins` declaration:
+
+[![Version](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/bisnode/opa/opa-gradle-plugin/maven-metadata.xml.svg?label=gradle)](https://plugins.gradle.org/plugin/com.bisnode.opa)
+
 ```
 plugins {
-    id 'com.bisnode.opa' version '0.3.0'
+    id 'com.bisnode.opa' version '<see above>'
 }
 ```
 For legacy versions of Gradle, see instructions in the
