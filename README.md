@@ -77,3 +77,7 @@ Just start/stop OPA before/after your test suite like this:
 integrationTest.dependsOn startOpa
 integrationTest.finalizedBy stopOpa
 ```
+
+## Contribution
+
+Interested in contributing? Please, start by reading [this document](https://github.com/Bisnode/opa-gradle-plugin/blob/master/CONTRIBUTING.md).
