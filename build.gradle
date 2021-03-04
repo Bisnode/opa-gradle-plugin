@@ -33,7 +33,7 @@ dependencies {
     implementation 'com.bisnode.opa:opa-test-result-formatter:0.1.2'
 
     testCompile gradleTestKit()
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
     testRuntime files(createClasspathManifest)
 }
