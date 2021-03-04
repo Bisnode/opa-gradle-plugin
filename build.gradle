@@ -29,11 +29,11 @@ task createClasspathManifest {
 
 dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.12.1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.12.2'
     implementation 'com.bisnode.opa:opa-test-result-formatter:0.1.2'
 
     testCompile gradleTestKit()
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine'
     testRuntime files(createClasspathManifest)
 }
