@@ -1,15 +1,23 @@
 package com.bisnode.opa.process;
 
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.tooling.TestExecutionException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
+import java.io.InputStreamReader;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class OpaTestProcess {
+
+    private static final Logger log = Logging.getLogger(OpaTestProcess.class);
+
     private final File rootDir;
     private final ProcessConfiguration command;
 
@@ -24,16 +32,34 @@ public class OpaTestProcess {
                     .directory(rootDir)
                     .command(command.getCommandArgs())
                     .start();
+
+            Future<String> resultFromOpa = spawnOutputConsumerThread(process);
             int exitCode = process.waitFor();
-            return new ProcessExecutionResult(asString(process.getInputStream()), exitCode);
-        } catch (IOException | InterruptedException e) {
+            // Should only retrieve results after OPA process exits
+            String result = resultFromOpa.get();
+            return new ProcessExecutionResult(result, exitCode);
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new TestExecutionException("Failed to start OPA process for tests", e);
         }
     }
 
-    private String asString(InputStream inputStream) {
-        // "Stupid Scanner trick" https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
-        return new Scanner(inputStream, UTF_8.name()).useDelimiter("\\A").next();
+    private Future<String> spawnOutputConsumerThread(Process process) {
+        CompletableFuture<String> outputFromProcess = new CompletableFuture<>();
+        new Thread(() -> {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream(), UTF_8))) {
+                StringBuilder resultStr = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    resultStr.append(line);
+                }
+                log.debug("[OPA] {}", resultStr);
+                outputFromProcess.complete(resultStr.toString());
+
+            } catch (IOException e) {
+                log.error("IOException while reading OPA's test results", e);
+            }
+        }).start();
+        return outputFromProcess;
     }
 
 }
