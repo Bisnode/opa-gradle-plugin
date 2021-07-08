@@ -1,6 +1,7 @@
 package com.bisnode.opa;
 
 import com.bisnode.opa.configuration.OpaPluginConvention;
+import com.bisnode.opa.process.OpaOutputConsumer;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -21,8 +23,8 @@ public class StartOpaTask extends DefaultTask {
     public StartOpaTask() {
         setGroup("opa");
         setDescription(
-            "Starts OPA in background to allow for subsequent tasks to query it (for integration tests or such). " +
-                "NOTE that you'll need to run the opaStop task to stop OPA after starting it with this task."
+                "Starts OPA in background to allow for subsequent tasks to query it (for integration tests or such). " +
+                        "NOTE that you'll need to run the opaStop task to stop OPA after starting it with this task."
         );
     }
 
@@ -37,9 +39,8 @@ public class StartOpaTask extends DefaultTask {
         Process process = runProcess(getProject().getRootDir(), buildCommand(location, srcAbsolutePath));
 
         storeOpaProcessInProject(process);
-        CountDownLatch serverInitializationLatch = new CountDownLatch(1);
-        spawnOutputConsumerThread(process, serverInitializationLatch);
-        waitForOpaInit(serverInitializationLatch);
+        OpaOutputConsumer outputConsumer = new OpaOutputConsumer(process);
+        waitForOpaInit(outputConsumer);
     }
 
     private List<String> buildCommand(String location, String srcAbsolutePath) {
@@ -51,10 +52,10 @@ public class StartOpaTask extends DefaultTask {
         getLogger().debug("Running command {}", String.join(" ", command));
         try {
             return new ProcessBuilder()
-                .directory(rootDir)
-                .command(command)
-                .redirectErrorStream(true)
-                .start();
+                    .directory(rootDir)
+                    .command(command)
+                    .redirectErrorStream(true)
+                    .start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -74,25 +75,24 @@ public class StartOpaTask extends DefaultTask {
         }
     }
 
-    private void spawnOutputConsumerThread(Process process, CountDownLatch latch) {
+    private void waitForOpaInit(OpaOutputConsumer outputConsumer) {
+        BlockingQueue<String> outputFromOpa = outputConsumer.spawn();
+        CountDownLatch serverInitializationLatch = new CountDownLatch(1);
+
         new Thread(() -> {
-            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream(), UTF_8))) {
+            try {
                 String line;
-                while ((line = bufferedReader.readLine()) != null) {
+                while (!(line = outputFromOpa.take()).equals(OpaOutputConsumer.POISON_PILL)) {
                     if (line.contains("Initializing server")) {
-                        latch.countDown();
+                        serverInitializationLatch.countDown();
                     }
                     getLogger().info("[OPA] {}", line);
                 }
-            } catch (IOException e) {
-                if (!"Stream closed".equals(e.getMessage())) {
-                    getLogger().warn("IOException while reading OPA's stdout", e);
-                }
+            } catch (InterruptedException e) {
+                getLogger().error("Failed to read from consumed output from OPA");
             }
         }).start();
-    }
 
-    private void waitForOpaInit(CountDownLatch serverInitializationLatch) {
         try {
             if (!serverInitializationLatch.await(5, TimeUnit.SECONDS)) {
                 throw new RuntimeException("OPA failed to initialize");
@@ -101,5 +101,6 @@ public class StartOpaTask extends DefaultTask {
             throw new RuntimeException(e);
         }
     }
+
 
 }
