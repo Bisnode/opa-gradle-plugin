@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 public class OpaIOTest {
     private Project project;
 

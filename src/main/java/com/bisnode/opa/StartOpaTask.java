@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -76,20 +75,16 @@ public class StartOpaTask extends DefaultTask {
     }
 
     private void waitForOpaInit(OpaOutputConsumer outputConsumer) {
-        BlockingQueue<String> outputFromOpa = outputConsumer.spawn();
+        outputConsumer.spawn();
         CountDownLatch serverInitializationLatch = new CountDownLatch(1);
 
         new Thread(() -> {
-            try {
-                String line;
-                while (!(line = outputFromOpa.take()).equals(OpaOutputConsumer.POISON_PILL)) {
-                    if (line.contains("Initializing server")) {
-                        serverInitializationLatch.countDown();
-                    }
-                    getLogger().info("[OPA] {}", line);
+            String line;
+            while ((line = outputConsumer.read()) != null) {
+                if (line.contains("Initializing server")) {
+                    serverInitializationLatch.countDown();
                 }
-            } catch (InterruptedException e) {
-                getLogger().error("Failed to read from consumed output from OPA");
+                getLogger().info("[OPA] {}", line);
             }
         }).start();
 
