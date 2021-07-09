@@ -80,7 +80,7 @@ public class StartOpaTask extends DefaultTask {
 
         new Thread(() -> {
             String line;
-            while ((line = outputConsumer.read()) != null) {
+            while ((line = outputConsumer.readLine()) != null) {
                 if (line.contains("Initializing server")) {
                     serverInitializationLatch.countDown();
                 }

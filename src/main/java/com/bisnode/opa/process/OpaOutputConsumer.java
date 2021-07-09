@@ -53,7 +53,7 @@ public class OpaOutputConsumer {
      *
      * @return Next output line from OPA, or null if there's no more output
      */
-    public String read() {
+    public String readLine() {
         try {
             String line = outputFromProcess.take();
             if (line.equals(POISON_PILL)) {
@@ -71,10 +71,10 @@ public class OpaOutputConsumer {
      *
      * @return All outputs lines from OPA
      */
-    public List<String> readAll() {
+    public List<String> readAllLines() {
         List<String> allOutput = new ArrayList<>();
         String line;
-        while ((line = read()) != null) {
+        while ((line = readLine()) != null) {
             allOutput.add(line);
         }
         return allOutput;

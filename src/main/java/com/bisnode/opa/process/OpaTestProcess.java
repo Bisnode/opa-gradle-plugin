@@ -25,7 +25,7 @@ public class OpaTestProcess {
 
             OpaOutputConsumer opaOutputConsumer = new OpaOutputConsumer(process);
             opaOutputConsumer.spawn();
-            String testResultFromOpa = opaOutputConsumer.readAll().stream().collect(Collectors.joining());
+            String testResultFromOpa = opaOutputConsumer.readAllLines().stream().collect(Collectors.joining());
             int exitCode = process.waitFor();
             return new ProcessExecutionResult(testResultFromOpa, exitCode);
         } catch (IOException | InterruptedException e) {
