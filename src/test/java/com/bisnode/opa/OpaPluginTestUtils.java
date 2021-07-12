@@ -19,4 +19,16 @@ final class OpaPluginTestUtils {
                 "}";
     }
 
+    static String getManyRegoPolicyTests() {
+        StringBuilder regoTestsBuilder = new StringBuilder();
+        for(int i = 0; i < 300; i++) {
+            regoTestsBuilder.append("\n");
+            regoTestsBuilder.append("test_allow_is_false_" + i + " {\n");
+            regoTestsBuilder.append("    not allow\n");
+            regoTestsBuilder.append("}");
+        }
+
+        return "package test\n" + regoTestsBuilder;
+    }
+
 }

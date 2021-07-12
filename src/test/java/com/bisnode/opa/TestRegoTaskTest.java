@@ -11,13 +11,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 
-import static com.bisnode.opa.OpaPluginTestUtils.getRegoPolicy;
-import static com.bisnode.opa.OpaPluginTestUtils.getRegoPolicyTest;
+import static com.bisnode.opa.OpaPluginTestUtils.*;
 import static com.bisnode.opa.OpaPluginUtils.toAbsoluteProjectPath;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestRegoTaskTest {
 
@@ -73,4 +72,20 @@ public class TestRegoTaskTest {
         assertEquals("src/test/rego", task.getTestDir());
     }
 
+
+    @Test
+    public void opaPluginStartTestTaskShouldNotHangForManyPolicyTests() throws IOException {
+        TestRegoTask task = (TestRegoTask) project.getTasks().getByName("testRego");
+
+        Path tmpDir = Files.createTempDirectory("rego");
+        Files.copy(new ByteArrayInputStream(getRegoPolicy().getBytes(UTF_8)), tmpDir.resolve("policy.rego"));
+        Files.copy(new ByteArrayInputStream(getManyRegoPolicyTests().getBytes(UTF_8)), tmpDir.resolve("policy_test.rego"));
+
+        task.setSrcDir(toAbsoluteProjectPath(project, tmpDir.toAbsolutePath().toString()));
+        task.setTestDir(toAbsoluteProjectPath(project, tmpDir.toAbsolutePath().toString()));
+
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            task.testRego();
+        });
+    }
 }
