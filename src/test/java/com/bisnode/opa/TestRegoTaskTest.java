@@ -13,10 +13,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 
-import static com.bisnode.opa.OpaPluginTestUtils.*;
+import static com.bisnode.opa.OpaPluginTestUtils.getManyRegoPolicyTests;
+import static com.bisnode.opa.OpaPluginTestUtils.getRegoPolicy;
+import static com.bisnode.opa.OpaPluginTestUtils.getRegoPolicyTest;
 import static com.bisnode.opa.OpaPluginUtils.toAbsoluteProjectPath;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestRegoTaskTest {
 
