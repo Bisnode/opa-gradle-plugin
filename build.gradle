@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.bisnode.opa'
-version '0.3.1'
+version '0.3.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
