@@ -4,11 +4,20 @@ import org.gradle.api.Project;
 import org.gradle.api.reflect.HasPublicType;
 import org.gradle.api.reflect.TypeOf;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Optional;
+
 public class DefaultOpaPluginConvention extends OpaPluginConvention implements HasPublicType {
 
     private final Project project;
 
-    private String location = "opa";
+    @Nullable
+    private String location = null;
     private String srcDir = "src/main/rego";
     private String testDir = "src/test/rego";
 
@@ -18,7 +27,8 @@ public class DefaultOpaPluginConvention extends OpaPluginConvention implements H
 
     @Override
     public String getLocation() {
-        return location;
+        return Optional.ofNullable(location)
+                .orElse(getOpaPathLocation().orElse(Paths.get("opa")).toString());
     }
 
     @Override
@@ -59,5 +69,22 @@ public class DefaultOpaPluginConvention extends OpaPluginConvention implements H
                 ", srcDir='" + srcDir + '\'' +
                 ", testDir='" + testDir + '\'' +
                 '}';
+    }
+
+    private static Optional<Path> getOpaPathLocation() {
+        return Environment.get("PATH").flatMap(path -> Arrays.stream(path.split(":"))
+                .map(DefaultOpaPluginConvention::findOpaExecutable)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst());
+    }
+
+    private static Optional<Path> findOpaExecutable(String path) {
+        try {
+            return Files.find(Paths.get(path), 1, (p, basicFileAttributes) -> "opa".equals(p.getFileName().toString()))
+                    .findFirst();
+        } catch (IOException ignored) {
+        }
+        return Optional.empty();
     }
 }
