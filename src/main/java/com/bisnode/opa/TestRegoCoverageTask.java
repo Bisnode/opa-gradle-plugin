@@ -48,7 +48,7 @@ public abstract class TestRegoCoverageTask extends DefaultTask {
                 execSpec.setStandardOutput(outputStream);
             });
 
-            String opaReportsPath = getProject().getRootDir() + "/build/reports/opa";
+            String opaReportsPath = getProject().getBuildDir() + "/reports/opa";
             String output = new String(outputStream.toByteArray(), UTF_8);
             if (new File(opaReportsPath).mkdirs()) {
                 Files.write(Paths.get(opaReportsPath + "/opa-coverage.json"), output.getBytes(UTF_8));
