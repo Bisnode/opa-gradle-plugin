@@ -16,20 +16,21 @@ repositories {
     mavenCentral()
 }
 
-task createClasspathManifest {
+tasks.register('createClasspathManifest') {
     def outputDir = file("$buildDir/$name")
     inputs.files sourceSets.main.runtimeClasspath
     outputs.dir outputDir
 
     doLast {
         outputDir.mkdirs()
-        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+        file("$outputDir/plugin-classpath.txt").text =
+                sourceSets.main.runtimeClasspath.join("\n")
     }
 }
 
 dependencies {
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.4'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.12.4'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.15.2'
     implementation 'com.bisnode.opa:opa-test-result-formatter:0.1.2'
 
     testImplementation gradleTestKit()
@@ -76,12 +77,12 @@ test {
 
 jacocoTestReport {
     reports {
-        xml.enabled true
-        html.enabled false
+        xml.required.set(true)
+        html.required.set(false)
     }
 }
 
-task functionalTest(type: Test) {
+tasks.register('functionalTest', Test) {
     useJUnitPlatform()
     group = 'verification'
     testClassesDirs = sourceSets.functionalTest.output.classesDirs
@@ -91,6 +92,6 @@ task functionalTest(type: Test) {
 check.dependsOn functionalTest
 
 wrapper {
-    gradleVersion = '7.1.1'
+    gradleVersion = '8.2.1'
     distributionType = Wrapper.DistributionType.ALL
 }
