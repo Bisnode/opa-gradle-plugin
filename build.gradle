@@ -95,3 +95,9 @@ wrapper {
     gradleVersion = '8.2.1'
     distributionType = Wrapper.DistributionType.ALL
 }
+
+javadoc {
+    options {
+        (it as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet")
+    }
+}
