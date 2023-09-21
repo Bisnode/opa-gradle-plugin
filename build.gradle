@@ -52,13 +52,13 @@ sourceSets {
 gradlePlugin {
     website = 'https://github.com/Bisnode/opa-gradle-plugin'
     vcsUrl = 'https://github.com/Bisnode/opa-gradle-plugin'
-    description = 'Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in Gradle builds.'
-    tags.set(['opa', 'openpolicyagent', 'test', 'testing', 'policy', 'policies', 'authorization'])
     plugins {
         opa {
             id = 'com.bisnode.opa'
             implementationClass = 'com.bisnode.opa.OpaPlugin'
             displayName = 'Open Policy Agent plugin for Gradle'
+            description = 'Plugin adding various tasks to help out integrating Open Policy Agent (OPA) in Gradle builds.'
+            tags.set(['opa', 'openpolicyagent', 'test', 'testing', 'policy', 'policies', 'authorization'])
         }
     }
     testSourceSets sourceSets.functionalTest
