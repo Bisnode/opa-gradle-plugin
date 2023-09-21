@@ -1,5 +1,7 @@
 package com.bisnode.test;
 
+import com.bisnode.opa.configuration.ExecutableMode;
+import com.bisnode.opa.configuration.OpaPlatform;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.BuildTask;
 import org.gradle.testkit.runner.GradleRunner;
@@ -64,6 +66,7 @@ public class PluginFunctionalTest {
         BuildResult result = prepareRunner(new StringWriter(), "testRego").build();
         @Nullable BuildTask task = result.task(":testRego");
 
+        assertEquals(1, result.getTasks().size());
         assertNotNull(task);
         assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
         assertNotNull(path.toFile());
@@ -101,6 +104,7 @@ public class PluginFunctionalTest {
         BuildResult result = prepareRunner(new StringWriter(), "testRego").build();
         @Nullable BuildTask task = result.task(":testRego");
 
+        assertEquals(1, result.getTasks().size());
         assertNotNull(task);
         assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
         assertNotNull(path.toFile());
@@ -136,6 +140,7 @@ public class PluginFunctionalTest {
         BuildResult result = prepareRunner(new StringWriter(), "testRego").buildAndFail();
         @Nullable BuildTask task = result.task(":testRego");
 
+        assertEquals(1, result.getTasks().size());
         assertNotNull(task);
         assertEquals(TaskOutcome.FAILED, task.getOutcome());
         assertNotNull(path.toFile());
@@ -180,6 +185,7 @@ public class PluginFunctionalTest {
         BuildResult result = prepareRunner(new StringWriter(), "testRego").build();
         @Nullable BuildTask task = result.task(":testRego");
 
+        assertEquals(1, result.getTasks().size());
         assertNotNull(task);
         assertEquals(TaskOutcome.SUCCESS, task.getOutcome());
         assertNotNull(path.toFile());
@@ -214,8 +220,73 @@ public class PluginFunctionalTest {
         BuildResult result = prepareRunner(new StringWriter(), "testRegoCoverage").build();
         @Nullable BuildTask task = result.task(":testRegoCoverage");
 
+        assertEquals(1, result.getTasks().size());
         assertNotNull(task);
         assertEquals(TaskOutcome.SUCCESS, Objects.requireNonNull(task).getOutcome());
+    }
+
+    @Test
+    public void testRunningTestWithDownloadModeWorks() throws IOException {
+        String directory = tmpDir.getAbsolutePath();
+        String buildFileContent = "opa {\n" +
+                "    mode '" + ExecutableMode.DOWNLOAD + "'\n" +
+                "    version '0.54.0'\n" +
+                "    srcDir '" + directory + "'\n" +
+                "    testDir '" + directory + "'\n" +
+                "}";
+        Files.write(buildFile.toPath(), buildFileContent.getBytes(UTF_8), StandardOpenOption.APPEND);
+
+        BuildResult result = prepareRunner(new StringWriter(), "testRegoCoverage").build();
+        @Nullable BuildTask task = result.task(":testRegoCoverage");
+        @Nullable BuildTask downloadTask = result.task(":downloadOpa_0.54.0");
+
+        assertEquals(2, result.getTasks().size());
+        assertNotNull(task);
+        assertEquals(TaskOutcome.SUCCESS, Objects.requireNonNull(task).getOutcome());
+        assertNotNull(downloadTask);
+        assertEquals(TaskOutcome.SUCCESS, Objects.requireNonNull(downloadTask).getOutcome());
+        assertTrue(Files.exists(OpaPlatform.getPlatform().getExecutablePath(tmpDir.toPath().resolve("build"), "0.54.0")));
+    }
+
+    @Test
+    public void testDownloadModeInMultiModuleWorks() throws IOException {
+        Files.delete(buildFile.toPath());
+        String settingFileContent = "include 'module1', 'module2'";
+        File settingFile = new File(tmpDir, "settings.gradle");
+        Files.write(settingFile.toPath(), settingFileContent.getBytes(UTF_8));
+        String subBuildFileContent = "plugins {\n" +
+                "    id 'com.bisnode.opa'\n" +
+                "}\n\n" +
+                "opa {\n" +
+                "    mode '" + ExecutableMode.DOWNLOAD + "'\n" +
+                "    version '0.54.0'\n" +
+                "    srcDir 'src'\n" +
+                "    testDir 'test'\n" +
+                "}";
+        File module1Directory = new File(tmpDir, "module1");
+        Files.createDirectories(module1Directory.toPath().resolve("src"));
+        Files.createDirectories(module1Directory.toPath().resolve("test"));
+        File module1BuildFile = new File(module1Directory, "build.gradle");
+        Files.write(module1BuildFile.toPath(), subBuildFileContent.getBytes(UTF_8));
+        File module2Directory = new File(tmpDir, "module2");
+        Files.createDirectories(module2Directory.toPath().resolve("src"));
+        Files.createDirectories(module2Directory.toPath().resolve("test"));
+        File module2BuildFile = new File(module2Directory, "build.gradle");
+        Files.write(module2BuildFile.toPath(), subBuildFileContent.getBytes(UTF_8));
+
+        BuildResult result = prepareRunner(new StringWriter(), "testRegoCoverage").build();
+        @Nullable BuildTask taskModule1 = result.task(":module1:testRegoCoverage");
+        @Nullable BuildTask taskModule2 = result.task(":module2:testRegoCoverage");
+        @Nullable BuildTask downloadTask = result.task(":downloadOpa_0.54.0");
+
+        assertEquals(3, result.getTasks().size());
+        assertNotNull(taskModule1);
+        assertEquals(TaskOutcome.SUCCESS, Objects.requireNonNull(taskModule1).getOutcome());
+        assertNotNull(taskModule2);
+        assertEquals(TaskOutcome.SUCCESS, Objects.requireNonNull(taskModule2).getOutcome());
+        assertNotNull(downloadTask);
+        assertEquals(TaskOutcome.SUCCESS, Objects.requireNonNull(downloadTask).getOutcome());
+        assertTrue(Files.exists(OpaPlatform.getPlatform().getExecutablePath(tmpDir.toPath().resolve("build"), "0.54.0")));
     }
 
     private GradleRunner prepareRunner(StringWriter writer, String... tasks) {
