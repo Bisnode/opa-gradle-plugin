@@ -35,7 +35,7 @@ public enum OpaPlatform {
                 return WINDOWS_AMD64;
             }
         } else if (osName.contains("Mac")) {
-            if (osArch.equals("x86_64")) {
+            if (osArch.equals("x86_64") || osArch.equals("aarch64")) {
                 return MAC_OS_AMD64;
             }
         } else if (osName.contains("Linux")) {
