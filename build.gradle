@@ -34,7 +34,7 @@ dependencies {
     implementation 'com.bisnode.opa:opa-test-result-formatter:0.1.2'
 
     testImplementation gradleTestKit()
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
     testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly files(createClasspathManifest)
