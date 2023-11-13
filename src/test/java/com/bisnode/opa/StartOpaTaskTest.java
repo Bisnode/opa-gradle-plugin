@@ -1,6 +1,6 @@
 package com.bisnode.opa;
 
-import com.bisnode.opa.configuration.OpaPluginConvention;
+import com.bisnode.opa.configuration.OpaExtension;
 import org.gradle.api.Project;
 import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder;
 import org.gradle.testfixtures.ProjectBuilder;
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,8 +38,9 @@ public class StartOpaTaskTest {
 
     @Test
     public void opaPluginStartTaskSavesProcessInExtProperties() throws IOException {
-        OpaPluginConvention convention = project.getConvention().getPlugin(OpaPluginConvention.class);
-        convention.setSrcDir(getPathToTmpFolder());
+        OpaExtension extension = Objects.requireNonNull(project.getExtensions().findByType(
+                OpaExtension.class), "opa extension");
+        extension.setSrcDir(getPathToTmpFolder());
 
         StartOpaTask startOpaTask = (StartOpaTask) project.getTasks().getByName("startOpa");
         startOpaTask.startOpa();

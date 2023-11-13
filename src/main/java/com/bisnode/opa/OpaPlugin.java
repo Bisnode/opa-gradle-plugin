@@ -6,12 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.bisnode.opa.configuration.DefaultOpaConfiguration;
-import com.bisnode.opa.configuration.DefaultOpaPluginConvention;
+import com.bisnode.opa.configuration.DefaultOpaExtension;
 import com.bisnode.opa.configuration.ExecutableMode;
-import com.bisnode.opa.configuration.OpaConfiguration;
+import com.bisnode.opa.configuration.OpaExtension;
 import com.bisnode.opa.configuration.OpaPlatform;
-import com.bisnode.opa.configuration.OpaPluginConvention;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -23,9 +21,7 @@ public class OpaPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        OpaPluginConvention convention = new DefaultOpaPluginConvention(project);
-        project.getConvention().getPlugins().put("opa", convention);
-        project.getExtensions().create(OpaConfiguration.class, "opa", DefaultOpaConfiguration.class, convention);
+        project.getExtensions().create(OpaExtension.class, "opa", DefaultOpaExtension.class);
 
         TaskContainer tasks = project.getTasks();
         List<Task> addedTasks = new ArrayList<>();
@@ -38,14 +34,14 @@ public class OpaPlugin implements Plugin<Project> {
     }
 
     private void applyToRootProject(Project project, List<Task> dependentTasks) {
-        OpaConfiguration opaConfiguration = project.getExtensions().findByType(OpaConfiguration.class);
-        if (opaConfiguration == null) {
+        OpaExtension opaExtension = project.getExtensions().findByType(OpaExtension.class);
+        if (opaExtension == null) {
             return;
         }
-        if (!ExecutableMode.DOWNLOAD.equals(opaConfiguration.getMode())) {
+        if (!ExecutableMode.DOWNLOAD.equals(opaExtension.getMode())) {
             return;
         }
-        String version = opaConfiguration.getVersion();
+        String version = opaExtension.getVersion();
         if (version == null || version.trim().isEmpty()) {
             throw new IllegalStateException("You must specify OPA version in DOWNLOAD mode");
         }
@@ -76,9 +72,9 @@ public class OpaPlugin implements Plugin<Project> {
         }
         downloadTasks.forEach(downloadTask -> dependentTasks.forEach(task -> {
             task.dependsOn(downloadTask);
-            final OpaConfiguration opaConfiguration = task.getExtensions().findByType(OpaConfiguration.class);
-            if (opaConfiguration != null) {
-                opaConfiguration.setLocation(opaExecutable.getParent());
+            final OpaExtension opaExtension = task.getExtensions().findByType(OpaExtension.class);
+            if (opaExtension != null) {
+                opaExtension.setLocation(opaExecutable.getParent());
             }
         }));
     }

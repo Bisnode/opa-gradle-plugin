@@ -1,6 +1,6 @@
 package com.bisnode.opa;
 
-import com.bisnode.opa.configuration.OpaPluginConvention;
+import com.bisnode.opa.configuration.OpaExtension;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.TaskAction;
@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -33,11 +34,12 @@ public abstract class TestRegoCoverageTask extends DefaultTask {
 
     @TaskAction
     public void testRegoCoverage() {
-        OpaPluginConvention convention = getProject().getConvention().getPlugin(OpaPluginConvention.class);
-        String location = convention.getLocation();
+        OpaExtension extension = Objects.requireNonNull(getProject().getExtensions().findByType(
+                OpaExtension.class), "opa extension");
+        String location = extension.getLocation();
 
-        String src = Optional.ofNullable(srcDir).orElse(convention.getSrcDir());
-        String test = Optional.ofNullable(testDir).orElse(convention.getTestDir());
+        String src = Optional.ofNullable(srcDir).orElse(extension.getSrcDir());
+        String test = Optional.ofNullable(testDir).orElse(extension.getTestDir());
 
         List<String> command = Arrays.asList(location, "test", src, test, "--coverage");
 
@@ -62,13 +64,13 @@ public abstract class TestRegoCoverageTask extends DefaultTask {
     @InputDirectory
     public String getSrcDir() {
         return Optional.ofNullable(srcDir)
-                .orElse(getProject().getConvention().getPlugin(OpaPluginConvention.class).getSrcDir());
+                .orElse(getProject().getExtensions().getByType(OpaExtension.class).getSrcDir());
     }
 
     @InputDirectory
     public String getTestDir() {
         return Optional.ofNullable(testDir)
-                .orElse(getProject().getConvention().getPlugin(OpaPluginConvention.class).getTestDir());
+                .orElse(getProject().getExtensions().getByType(OpaExtension.class).getTestDir());
     }
 
     public void setSrcDir(String srcDir) {
