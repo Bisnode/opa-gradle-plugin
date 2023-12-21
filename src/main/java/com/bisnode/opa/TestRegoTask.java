@@ -1,6 +1,6 @@
 package com.bisnode.opa;
 
-import com.bisnode.opa.configuration.OpaPluginConvention;
+import com.bisnode.opa.configuration.OpaExtension;
 import com.bisnode.opa.process.OpaTestProcess;
 import com.bisnode.opa.process.ProcessConfiguration;
 import com.bisnode.opa.process.ProcessExecutionResult;
@@ -80,17 +80,17 @@ public class TestRegoTask extends DefaultTask {
     @InputDirectory
     public String getSrcDir() {
         return Optional.ofNullable(srcDir)
-                .orElse(getProject().getConvention().getPlugin(OpaPluginConvention.class).getSrcDir());
+                .orElse(getProject().getExtensions().getByType(OpaExtension.class).getSrcDir());
     }
 
     @InputDirectory
     public String getTestDir() {
         return Optional.ofNullable(testDir)
-                .orElse(getProject().getConvention().getPlugin(OpaPluginConvention.class).getTestDir());
+                .orElse(getProject().getExtensions().getByType(OpaExtension.class).getTestDir());
     }
 
     private String getLocation() {
-        return getProject().getConvention().getPlugin(OpaPluginConvention.class).getLocation();
+        return getProject().getExtensions().getByType(OpaExtension.class).getLocation();
     }
 
     public void setSrcDir(String srcDir) {

@@ -1,6 +1,6 @@
 package com.bisnode.opa;
 
-import com.bisnode.opa.configuration.OpaPluginConvention;
+import com.bisnode.opa.configuration.OpaExtension;
 import com.bisnode.opa.process.OpaOutputConsumer;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -29,9 +30,10 @@ public class StartOpaTask extends DefaultTask {
 
     @TaskAction
     public void startOpa() {
-        OpaPluginConvention convention = getProject().getConvention().getPlugin(OpaPluginConvention.class);
-        String location = convention.getLocation();
-        String srcDir = convention.getSrcDir();
+        OpaExtension extension = Objects.requireNonNull(getProject().getExtensions().findByType(
+                OpaExtension.class), "opa extension");
+        String location = extension.getLocation();
+        String srcDir = extension.getSrcDir();
 
         String srcAbsolutePath = OpaPluginUtils.toAbsoluteProjectPath(getProject(), srcDir);
         getLogger().debug("Starting OPA from {} with srcDir set to {}", "opa".equals(location) ? "$PATH" : location, srcDir);

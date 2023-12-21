@@ -2,23 +2,13 @@ package com.bisnode.opa.configuration;
 
 import javax.annotation.Nullable;
 
-import org.gradle.api.Project;
-import org.gradle.api.reflect.HasPublicType;
-import org.gradle.api.reflect.TypeOf;
-
-public class DefaultOpaPluginConvention extends OpaPluginConvention implements HasPublicType {
-
-    private final Project project;
+public class DefaultOpaExtension implements OpaExtension {
 
     private ExecutableMode mode = ExecutableMode.LOCAL;
     private String location = "opa";
     @Nullable private String version;
     private String srcDir = "src/main/rego";
     private String testDir = "src/test/rego";
-
-    public DefaultOpaPluginConvention(Project project) {
-        this.project = project;
-    }
 
     @Override
     public ExecutableMode getMode() {
@@ -46,7 +36,7 @@ public class DefaultOpaPluginConvention extends OpaPluginConvention implements H
     }
 
     @Override
-    public void setVersion(@Nullable String version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
@@ -68,21 +58,5 @@ public class DefaultOpaPluginConvention extends OpaPluginConvention implements H
     @Override
     public void setTestDir(String testDir) {
         this.testDir = testDir;
-    }
-
-    @Override
-    public TypeOf<?> getPublicType() {
-        return TypeOf.typeOf(OpaPluginConvention.class);
-    }
-
-    @Override
-    public String toString() {
-        return "DefaultOpaPluginConvention{" +
-                "project=" + project +
-                ", mode='" + mode + '\'' +
-                ", location='" + location + '\'' +
-                ", srcDir='" + srcDir + '\'' +
-                ", testDir='" + testDir + '\'' +
-                '}';
     }
 }

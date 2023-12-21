@@ -1,6 +1,6 @@
 package com.bisnode.opa;
 
-import com.bisnode.opa.configuration.OpaPluginConvention;
+import com.bisnode.opa.configuration.OpaExtension;
 import org.gradle.api.Project;
 import org.gradle.internal.impldep.org.apache.http.client.methods.CloseableHttpResponse;
 import org.gradle.internal.impldep.org.apache.http.client.methods.HttpGet;
@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,8 +40,9 @@ public class OpaIOTest {
     @Test
     void shouldNotHangOnOPAOutputBufferOverflow() throws IOException {
         //given
-        OpaPluginConvention convention = project.getConvention().getPlugin(OpaPluginConvention.class);
-        convention.setSrcDir(getPathToTmpFolder());
+        OpaExtension extension = Objects.requireNonNull(project.getExtensions().findByType(
+                OpaExtension.class), "opa extension");
+        extension.setSrcDir(getPathToTmpFolder());
 
         StartOpaTask startOpaTask = (StartOpaTask) project.getTasks().getByName("startOpa");
         //when

@@ -3,7 +3,7 @@ package com.bisnode.opa.configuration;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("unused")
-public interface OpaConfiguration {
+public interface OpaExtension {
 
     ExecutableMode getMode();
     void setMode(ExecutableMode mode);
