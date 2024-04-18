@@ -21,9 +21,6 @@ plugins {
 For legacy versions of Gradle, see instructions in the
 [Gradle plugin directory](https://plugins.gradle.org/plugin/com.bisnode.opa).
 
-**Prerequisites**: OPA installed on same machine as the tasks are run, either on `$PATH` or pointed out by the
-`location` configuration attribute (see Configuration below).
-
 ## Configuration
 
 The following configuration properties are made available by the plugin:
@@ -32,8 +29,15 @@ opa {
     location    = 'path/opa/executable'     // default: use opa on $PATH
     srcDir      = 'path/to/rego/src'        // default: src/main/rego
     testDir     = 'path/to/rego/tests/'     // default: src/test/rego
+    mode        = 'DOWNLOAD'                // default: LOCAL
+    version     = '0.63.0'
 }
 ```
+
+In LOCAL mode OPA should be installed on same machine as the tasks are run, either on `$PATH` or pointed out by the
+`location` configuration attribute.
+
+In DOWNLOAD mode OPA is fetched from https://openpolicyagent.org/downloads
 
 ## Tasks
 
