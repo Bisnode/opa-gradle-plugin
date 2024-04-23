@@ -28,8 +28,8 @@ public enum OpaPlatform {
     }
 
     public static OpaPlatform getPlatform() {
-        final String osName = System.getProperty("os.name");
-        final String osArch = System.getProperty("os.arch");
+        final String osName = System.getProperty("os.name").toLowerCase();
+        final String osArch = System.getProperty("os.arch").toLowerCase();
         if (osName.contains("win")) {
             if (osArch.equals("amd64")) {
                 return WINDOWS_AMD64;
