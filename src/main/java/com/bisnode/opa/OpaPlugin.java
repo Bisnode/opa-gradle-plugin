@@ -21,23 +21,19 @@ public class OpaPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        project.getExtensions().create(OpaExtension.class, "opa", DefaultOpaExtension.class);
+        OpaExtension opaExtension = project.getExtensions().create(OpaExtension.class, "opa", DefaultOpaExtension.class);
 
         TaskContainer tasks = project.getTasks();
-        List<Task> addedTasks = new ArrayList<>();
-        addedTasks.add(tasks.create("startOpa", StartOpaTask.class));
-        addedTasks.add(tasks.create("stopOpa", StopOpaTask.class));
-        addedTasks.add(tasks.create("testRego", TestRegoTask.class));
-        addedTasks.add(tasks.create("testRegoCoverage", TestRegoCoverageTask.class));
+        List<TaskProvider<?>> addedTasks = new ArrayList<>();
+        addedTasks.add(tasks.register("startOpa", StartOpaTask.class));
+        addedTasks.add(tasks.register("stopOpa", StopOpaTask.class));
+        addedTasks.add(tasks.register("testRego", TestRegoTask.class));
+        addedTasks.add(tasks.register("testRegoCoverage", TestRegoCoverageTask.class));
 
-        project.afterEvaluate(currentProject -> applyToRootProject(currentProject, addedTasks));
+        project.afterEvaluate(currentProject -> applyToRootProject(currentProject, opaExtension, addedTasks));
     }
 
-    private void applyToRootProject(Project project, List<Task> dependentTasks) {
-        OpaExtension opaExtension = project.getExtensions().findByType(OpaExtension.class);
-        if (opaExtension == null) {
-            return;
-        }
+    private void applyToRootProject(Project project, OpaExtension opaExtension, List<TaskProvider<?>> dependentTasks) {
         if (!ExecutableMode.DOWNLOAD.equals(opaExtension.getMode())) {
             return;
         }
@@ -57,7 +53,7 @@ public class OpaPlugin implements Plugin<Project> {
         }
     }
 
-    private synchronized void applyDownloadTask(Project project, String version, List<Task> dependentTasks) {
+    private synchronized void applyDownloadTask(Project project, String version, List<TaskProvider<?>> dependentTasks) {
         final String taskName = String.format("%s_%s", DownloadOpaTask.TASK_BASE_NAME, version);
         final File opaExecutable = OpaPlatform.getPlatform().getExecutablePath(project.getBuildDir().toPath(), version).toFile();
         Set<Task> downloadTasks = project.getTasksByName(taskName, false);
@@ -71,8 +67,8 @@ public class OpaPlugin implements Plugin<Project> {
             downloadTasks.add(downloadTask.get());
         }
         downloadTasks.forEach(downloadTask -> dependentTasks.forEach(task -> {
-            task.dependsOn(downloadTask);
-            final OpaExtension opaExtension = task.getExtensions().findByType(OpaExtension.class);
+            task.get().dependsOn(downloadTask);
+            final OpaExtension opaExtension = task.get().getExtensions().findByType(OpaExtension.class);
             if (opaExtension != null) {
                 opaExtension.setLocation(opaExecutable.getParent());
             }
